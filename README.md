@@ -41,6 +41,14 @@ leetcode_tool/
 
 Python 3.10+, Flask, CodeMirror 5 — no database, no external API, runs fully offline.
 
+## License
+
+MIT — see [LICENSE](LICENSE).
+
 ## Disclaimer
 
-Built with vibe coding (AI-assisted). There may be bugs or mistakes as a result. Provided as-is for personal learning — no guarantees of correctness or completeness. The author is not legally responsible for any issues arising from use of this tool.
+**Not affiliated with LeetCode, NeetCode, Blind, or any company mentioned in the question data.** Company names are referenced descriptively based on publicly available community reports only.
+
+Question descriptions are original summaries of well-known algorithmic problems — not reproduced from any proprietary source.
+
+Built with vibe coding (AI-assisted) — there may be bugs or inaccuracies. Provided as-is for personal learning with no guarantees of correctness or completeness. The author accepts no legal responsibility for any outcomes arising from use of this tool. See [NOTICE](NOTICE) for full details.

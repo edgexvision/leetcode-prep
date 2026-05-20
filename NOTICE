@@ -1,0 +1,41 @@
+NOTICE
+======
+
+This project (leetcode-prep) is an independent, open-source educational tool.
+It is not affiliated with, endorsed by, or connected to LeetCode, LeetCode LLC,
+NeetCode, Blind, or any company mentioned within the question data.
+
+Question Content
+----------------
+The problem descriptions, hints, and examples in data/questions.json are
+original summaries written to describe well-known algorithmic problems commonly
+discussed in software engineering education and interview preparation communities.
+They are not reproduced from any proprietary source. The underlying algorithmic
+problems themselves (e.g. "find two numbers that sum to a target") are
+mathematical concepts and are not copyrightable.
+
+The "Blind 75" term is a community-coined phrase referring to a widely shared
+list of common interview problems. Its use here is purely descriptive.
+
+Company References
+------------------
+Company names are referenced solely to indicate that certain problem types are
+commonly associated with those companies' interview processes, based on
+publicly available community reports. No proprietary or confidential information
+is included. Use of company names does not imply any affiliation or endorsement.
+
+Third-Party Software
+--------------------
+This tool makes use of the following open-source libraries:
+
+  - Flask (BSD-3-Clause) — https://flask.palletsprojects.com
+  - CodeMirror 5 (MIT) — https://codemirror.net
+  - Inter font (SIL Open Font License 1.1) — https://rsms.me/inter
+  - JetBrains Mono (Apache 2.0) — https://www.jetbrains.com/lp/mono
+
+Disclaimer
+----------
+This software is provided for personal educational use only. The author makes
+no guarantees of correctness, completeness, or fitness for any particular
+purpose. The author is not responsible for any outcomes — academic, professional,
+or otherwise — resulting from use of this tool.
