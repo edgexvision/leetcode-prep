@@ -5,7 +5,8 @@ from typing import Any, Dict, List, Optional
 
 from leetcode_tool.question_bank import recommended_by_weakness
 
-HISTORY_FILE = Path(__file__).resolve().parent.parent / "submission_history.json"
+HISTORY_FILE = Path.home() / ".leetcodeprep" / "history.json"
+HISTORY_FILE.parent.mkdir(exist_ok=True)
 
 # Spaced repetition intervals (days) indexed by consecutive successful solves
 _SR_INTERVALS = [1, 3, 7, 14, 30]
