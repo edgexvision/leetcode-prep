@@ -6,7 +6,7 @@ So I built my own tool.
 
 ## What I built
 
-A local Flask web app — 77 Blind 75 questions, a CodeMirror editor, and a real Python execution engine. No subscriptions, no ads, runs fully offline on your laptop.
+A local Flask web app — 77+ questions covering the Blind 75, a CodeMirror editor, and a real Python execution engine. No subscriptions, no ads, runs fully offline on your laptop. The question bank grows over time.
 
 Here's what makes it different from just doing LeetCode.
 

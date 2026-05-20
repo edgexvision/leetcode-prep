@@ -4,7 +4,7 @@ A self-hosted Python practice tool that runs entirely on your laptop. Built to a
 
 ## What it does
 
-- **77 Blind 75 questions** with tiered hints, key insight reveals, and pattern explanations
+- **77+ questions covering the Blind 75** with tiered hints, key insight reveals, and pattern explanations — question bank grows over time
 - **Browser-based Python editor** (CodeMirror, Dracula theme) with autocomplete and real test execution
 - **Smart code review** — detects your actual algorithm (hash map, two pointers, BFS, DP, etc.), estimates your time complexity, and flags pattern mismatches against the intended approach
 - **Spaced repetition** — resurfaces questions on a 1 → 3 → 7 → 14 → 30 day schedule based on how well you solved them
