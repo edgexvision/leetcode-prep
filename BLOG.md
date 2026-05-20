@@ -73,4 +73,12 @@ Open `http://localhost:5000` and start practicing.
 
 ---
 
+## A note on how this was built
+
+This tool was built using **vibe coding** — I described what I wanted and iterated with AI (Claude) to build it. It was a fun way to ship something useful fast, but it means there may be bugs, edge cases, or suboptimal code I haven't caught. Use it as a learning aid, not a source of truth.
+
+**Disclaimer:** This project is provided as-is for personal learning purposes. I make no guarantees about correctness, completeness, or fitness for any particular use. I am not legally responsible for any issues arising from using this tool. The question content is inspired by publicly known interview problems — always refer to official sources for authoritative problem statements.
+
+---
+
 Would love feedback. If you use it and find something broken or have ideas, open an issue.

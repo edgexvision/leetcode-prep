@@ -40,3 +40,7 @@ leetcode_tool/
 ## Stack
 
 Python 3.10+, Flask, CodeMirror 5 — no database, no external API, runs fully offline.
+
+## Disclaimer
+
+Built with vibe coding (AI-assisted). There may be bugs or mistakes as a result. Provided as-is for personal learning — no guarantees of correctness or completeness. The author is not legally responsible for any issues arising from use of this tool.
