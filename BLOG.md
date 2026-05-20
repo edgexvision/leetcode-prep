@@ -62,7 +62,7 @@ Python 3.10+, Flask, CodeMirror 5. No database — just a JSON file for history.
 
 ## Get it
 
-[github.com/krishnakumar/leetcode-prep](https://github.com/krishnakumar/leetcode-prep) ← update with your actual URL
+[github.com/edgexvision/leetcode-prep](https://github.com/edgexvision/leetcode-prep)
 
 ```bash
 pip install flask
