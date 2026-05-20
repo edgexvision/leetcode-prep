@@ -1,0 +1,2636 @@
+[
+  {
+    "id": 1,
+    "title": "Two Sum",
+    "frequency": 98,
+    "difficulty": "Easy",
+    "pattern": "Hash Map",
+    "tags": ["array", "hash map"],
+    "companies": ["Amazon", "Google", "Apple", "Microsoft", "Adobe"],
+    "function_name": "two_sum",
+    "signature": "def two_sum(nums: List[int], target: int) -> List[int]:",
+    "description": "Given an array of integers and a target, return indices of the two numbers such that they add up to target. Assume exactly one solution exists. You may not use the same element twice.",
+    "key_insight": "Trade space for time: store each number's index in a hash map and check if (target - num) exists in O(1) as you iterate.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "common_mistakes": [
+      "Using nested loops (O(n²)) instead of a single-pass hash map",
+      "Returning values instead of indices",
+      "Using the same element twice: nums=[3,3], target=6 must return [0,1] not [0,0]"
+    ],
+    "hints": [
+      "What data structure lets you look up a value in O(1)?",
+      "For each number, the answer you need is (target - number). Check if you've seen it before.",
+      "Use a dict mapping value → index. For each num, check if (target-num) is in the dict before inserting num."
+    ],
+    "examples": [
+      {"input": {"nums": [2,7,11,15], "target": 9}, "output": [0,1]},
+      {"input": {"nums": [3,2,4], "target": 6}, "output": [1,2]}
+    ],
+    "test_cases": [
+      {"input": {"nums": [2,7,11,15], "target": 9}, "expected": [0,1]},
+      {"input": {"nums": [3,2,4], "target": 6}, "expected": [1,2]},
+      {"input": {"nums": [3,3], "target": 6}, "expected": [0,1]},
+      {"input": {"nums": [0,4,3,0], "target": 0}, "expected": [0,3]}
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Longest Substring Without Repeating Characters",
+    "frequency": 92,
+    "difficulty": "Medium",
+    "pattern": "Sliding Window",
+    "tags": ["string", "sliding window", "hash map"],
+    "companies": ["Amazon", "Google", "Bloomberg", "Facebook"],
+    "function_name": "length_of_longest_substring",
+    "signature": "def length_of_longest_substring(s: str) -> int:",
+    "description": "Find the length of the longest substring without repeating characters.",
+    "key_insight": "Use a sliding window with a set. Expand right; when a duplicate is found, shrink from the left until it's gone.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(min(n, alphabet))",
+    "common_mistakes": [
+      "Restarting the window from scratch instead of shrinking from the left",
+      "Forgetting to update the character's index in the map when it's seen again",
+      "Off-by-one: window size is right - left + 1"
+    ],
+    "hints": [
+      "What window-based approach keeps track of distinct characters efficiently?",
+      "Store the last-seen index of each character. When you see a repeat, jump left pointer past it.",
+      "Use a dict {char: index}. left = max(left, last_seen[c] + 1) on every step."
+    ],
+    "examples": [
+      {"input": {"s": "abcabcbb"}, "output": 3},
+      {"input": {"s": "bbbbb"}, "output": 1}
+    ],
+    "test_cases": [
+      {"input": {"s": "abcabcbb"}, "expected": 3},
+      {"input": {"s": "bbbbb"}, "expected": 1},
+      {"input": {"s": "pwwkew"}, "expected": 3},
+      {"input": {"s": ""}, "expected": 0},
+      {"input": {"s": "au"}, "expected": 2}
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Merge Intervals",
+    "frequency": 85,
+    "difficulty": "Medium",
+    "pattern": "Intervals",
+    "tags": ["intervals", "sorting", "array"],
+    "companies": ["Google", "Facebook", "Amazon", "Bloomberg", "Uber"],
+    "function_name": "merge",
+    "signature": "def merge(intervals: List[List[int]]) -> List[List[int]]:",
+    "description": "Given an array of intervals, merge all overlapping intervals and return an array of the non-overlapping intervals covering all the input intervals.",
+    "key_insight": "Sort by start time. Then greedily merge: if the current interval's start is ≤ the last merged interval's end, extend the end; otherwise, append as a new interval.",
+    "time_complexity": "O(n log n)",
+    "space_complexity": "O(n)",
+    "common_mistakes": [
+      "Forgetting to sort by start time first",
+      "Using < instead of <= when checking overlap (intervals touching at a point do overlap: [1,3],[3,5] → [1,5])",
+      "Not handling an empty input list"
+    ],
+    "hints": [
+      "What order should intervals be in to make merging easy?",
+      "Sort by start. Walk through and check if current.start <= last_merged.end.",
+      "If overlap: last_merged.end = max(last_merged.end, current.end). Else append current."
+    ],
+    "examples": [
+      {"input": {"intervals": [[1,3],[2,6],[8,10],[15,18]]}, "output": [[1,6],[8,10],[15,18]]}
+    ],
+    "test_cases": [
+      {"input": {"intervals": [[1,3],[2,6],[8,10],[15,18]]}, "expected": [[1,6],[8,10],[15,18]]},
+      {"input": {"intervals": [[1,4],[4,5]]}, "expected": [[1,5]]},
+      {"input": {"intervals": []}, "expected": []},
+      {"input": {"intervals": [[1,4],[0,4]]}, "expected": [[0,4]]},
+      {"input": {"intervals": [[1,4],[2,3]]}, "expected": [[1,4]]}
+    ]
+  },
+  {
+    "id": 4,
+    "title": "Number of Islands",
+    "frequency": 89,
+    "difficulty": "Medium",
+    "pattern": "Graph DFS/BFS",
+    "tags": ["graph", "dfs", "bfs", "matrix"],
+    "companies": ["Amazon", "Google", "Facebook", "Microsoft", "Uber"],
+    "function_name": "num_islands",
+    "signature": "def num_islands(grid: List[List[str]]) -> int:",
+    "description": "Given a 2D grid of '1's (land) and '0's (water), count the number of islands. An island is surrounded by water and formed by connecting adjacent land cells horizontally or vertically.",
+    "key_insight": "DFS/BFS from each unvisited '1'. Mark cells visited (change to '0' or use a visited set) as you flood-fill the entire island. Count how many times you start a new DFS.",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(m * n) for recursion stack",
+    "common_mistakes": [
+      "Forgetting to mark cells as visited, causing infinite loops",
+      "Checking diagonal neighbors (only 4-directional: up/down/left/right)",
+      "Not handling an empty grid"
+    ],
+    "hints": [
+      "What algorithm explores all connected cells starting from one point?",
+      "DFS: for each '1' not yet visited, mark it and its entire island, increment count.",
+      "Mutate grid in place: set '1' → '0' when visited. No extra space needed."
+    ],
+    "examples": [
+      {"input": {"grid": [["1","1","0","0","0"],["1","1","0","0","0"],["0","0","1","0","0"],["0","0","0","1","1"]]}, "output": 3}
+    ],
+    "test_cases": [
+      {"input": {"grid": [["1","1","0","0","0"],["1","1","0","0","0"],["0","0","1","0","0"],["0","0","0","1","1"]]}, "expected": 3},
+      {"input": {"grid": [["1","0","1"],["0","1","0"],["1","0","1"]]}, "expected": 5},
+      {"input": {"grid": []}, "expected": 0},
+      {"input": {"grid": [["1","1","1"],["0","1","0"],["1","1","1"]]}, "expected": 1}
+    ]
+  },
+  {
+    "id": 5,
+    "title": "Best Time to Buy and Sell Stock",
+    "frequency": 90,
+    "difficulty": "Easy",
+    "pattern": "Greedy / Kadane's",
+    "tags": ["array", "greedy", "dynamic programming"],
+    "companies": ["Amazon", "Facebook", "Goldman Sachs", "Microsoft", "Uber"],
+    "function_name": "max_profit",
+    "signature": "def max_profit(prices: List[int]) -> int:",
+    "description": "Given an array of stock prices where prices[i] is the price on day i, find the maximum profit you can achieve by buying on one day and selling on a later day. Return 0 if no profit is possible.",
+    "key_insight": "Track the minimum price seen so far. At each day, compute profit = price - min_so_far and update the global max. One pass, O(n).",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Returning a negative profit — if prices only decrease, return 0",
+      "Trying to sell before buying (must buy before sell)",
+      "Using O(n²) brute force: trying all buy/sell pairs"
+    ],
+    "hints": [
+      "What two values do you need to track as you scan left to right?",
+      "Track the minimum price seen so far and compute profit at each step.",
+      "min_price = min(min_price, price); max_profit = max(max_profit, price - min_price)"
+    ],
+    "examples": [
+      {"input": {"prices": [7,1,5,3,6,4]}, "output": 5},
+      {"input": {"prices": [7,6,4,3,1]}, "output": 0}
+    ],
+    "test_cases": [
+      {"input": {"prices": [7,1,5,3,6,4]}, "expected": 5},
+      {"input": {"prices": [7,6,4,3,1]}, "expected": 0},
+      {"input": {"prices": [1,2]}, "expected": 1},
+      {"input": {"prices": [2,4,1]}, "expected": 2},
+      {"input": {"prices": [1]}, "expected": 0}
+    ]
+  },
+  {
+    "id": 6,
+    "title": "Contains Duplicate",
+    "frequency": 85,
+    "difficulty": "Easy",
+    "pattern": "Hash Map",
+    "tags": ["array", "hash map", "sorting"],
+    "companies": ["Amazon", "Google", "Apple", "Airbnb"],
+    "function_name": "contains_duplicate",
+    "signature": "def contains_duplicate(nums: List[int]) -> bool:",
+    "description": "Given an integer array, return true if any value appears at least twice, and false if every element is distinct.",
+    "key_insight": "Convert to a set. If len(set(nums)) < len(nums), there's a duplicate. Or use a hash set and check membership on the fly.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "common_mistakes": [
+      "Sorting and comparing adjacent elements — works but O(n log n) unnecessarily",
+      "Nested loop O(n²) comparison",
+      "Forgetting to return False for an empty or single-element list"
+    ],
+    "hints": [
+      "What one-liner checks for duplicates in Python?",
+      "A set holds only unique elements. Compare its size to the original array.",
+      "return len(nums) != len(set(nums))"
+    ],
+    "examples": [
+      {"input": {"nums": [1,2,3,1]}, "output": true},
+      {"input": {"nums": [1,2,3,4]}, "output": false}
+    ],
+    "test_cases": [
+      {"input": {"nums": [1,2,3,1]}, "expected": true},
+      {"input": {"nums": [1,2,3,4]}, "expected": false},
+      {"input": {"nums": [1,1,1,3,3,4,3,2,4,2]}, "expected": true},
+      {"input": {"nums": [1]}, "expected": false}
+    ]
+  },
+  {
+    "id": 7,
+    "title": "Valid Anagram",
+    "frequency": 82,
+    "difficulty": "Easy",
+    "pattern": "Hash Map",
+    "tags": ["string", "hash map", "sorting"],
+    "companies": ["Amazon", "Facebook", "Microsoft", "Uber"],
+    "function_name": "is_anagram",
+    "signature": "def is_anagram(s: str, t: str) -> bool:",
+    "description": "Given two strings s and t, return true if t is an anagram of s, and false otherwise. An anagram uses all original letters exactly once.",
+    "key_insight": "Two strings are anagrams iff they have identical character frequency maps. Use Counter or sort both strings.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1) — bounded by alphabet size",
+    "common_mistakes": [
+      "Not checking if lengths differ first (quick early exit)",
+      "Sorting instead of counting: O(n log n) when O(n) is achievable",
+      "Case sensitivity: usually both strings are lowercase per constraints"
+    ],
+    "hints": [
+      "What's the key property that makes two strings anagrams?",
+      "They must have the same character counts. Use collections.Counter.",
+      "return Counter(s) == Counter(t) — that's it."
+    ],
+    "examples": [
+      {"input": {"s": "anagram", "t": "nagaram"}, "output": true},
+      {"input": {"s": "rat", "t": "car"}, "output": false}
+    ],
+    "test_cases": [
+      {"input": {"s": "anagram", "t": "nagaram"}, "expected": true},
+      {"input": {"s": "rat", "t": "car"}, "expected": false},
+      {"input": {"s": "", "t": ""}, "expected": true},
+      {"input": {"s": "a", "t": "ab"}, "expected": false}
+    ]
+  },
+  {
+    "id": 8,
+    "title": "Maximum Subarray",
+    "frequency": 92,
+    "difficulty": "Easy",
+    "pattern": "Kadane's Algorithm",
+    "tags": ["array", "dynamic programming", "divide and conquer"],
+    "companies": ["Amazon", "Microsoft", "Apple", "LinkedIn", "Bloomberg"],
+    "function_name": "max_subarray",
+    "signature": "def max_subarray(nums: List[int]) -> int:",
+    "description": "Given an integer array, find the contiguous subarray with the largest sum and return its sum.",
+    "key_insight": "Kadane's: at each index, decide whether to extend the current subarray or start fresh. current = max(num, current + num). Update global max each step.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Initializing max_sum = 0 — fails for all-negative arrays (should be nums[0])",
+      "Returning 0 when all numbers are negative",
+      "Confusing current subarray sum with global best"
+    ],
+    "hints": [
+      "At each position, should you start a new subarray or continue the existing one?",
+      "current = max(num, current + num). If extending would make it worse, restart.",
+      "Initialize both current and result to nums[0], not 0."
+    ],
+    "examples": [
+      {"input": {"nums": [-2,1,-3,4,-1,2,1,-5,4]}, "output": 6},
+      {"input": {"nums": [1]}, "output": 1}
+    ],
+    "test_cases": [
+      {"input": {"nums": [-2,1,-3,4,-1,2,1,-5,4]}, "expected": 6},
+      {"input": {"nums": [1]}, "expected": 1},
+      {"input": {"nums": [5,4,-1,7,8]}, "expected": 23},
+      {"input": {"nums": [-1,-2,-3,-4]}, "expected": -1},
+      {"input": {"nums": [-2,-1]}, "expected": -1}
+    ]
+  },
+  {
+    "id": 9,
+    "title": "Valid Palindrome",
+    "frequency": 83,
+    "difficulty": "Easy",
+    "pattern": "Two Pointers",
+    "tags": ["string", "two pointers"],
+    "companies": ["Facebook", "Amazon", "Microsoft", "Apple"],
+    "function_name": "is_palindrome",
+    "signature": "def is_palindrome(s: str) -> bool:",
+    "description": "Given a string s, return true if it is a palindrome considering only alphanumeric characters and ignoring case.",
+    "key_insight": "Filter to alphanumeric and lowercase, then use two pointers from both ends moving inward.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n) for filtered string, O(1) with two-pointer in-place check",
+    "common_mistakes": [
+      "Forgetting to filter out non-alphanumeric characters",
+      "Forgetting to lowercase before comparing",
+      "An empty string (after filtering) is a palindrome — return True"
+    ],
+    "hints": [
+      "How do you ignore spaces and punctuation?",
+      "Filter: ''.join(c.lower() for c in s if c.isalnum()). Then check if it equals its reverse.",
+      "Or use two pointers, skip non-alnum characters, compare s[left].lower() == s[right].lower()."
+    ],
+    "examples": [
+      {"input": {"s": "A man, a plan, a canal: Panama"}, "output": true},
+      {"input": {"s": "race a car"}, "output": false}
+    ],
+    "test_cases": [
+      {"input": {"s": "A man, a plan, a canal: Panama"}, "expected": true},
+      {"input": {"s": "race a car"}, "expected": false},
+      {"input": {"s": " "}, "expected": true},
+      {"input": {"s": "0P"}, "expected": false}
+    ]
+  },
+  {
+    "id": 10,
+    "title": "Valid Parentheses",
+    "frequency": 90,
+    "difficulty": "Easy",
+    "pattern": "Stack",
+    "tags": ["string", "stack"],
+    "companies": ["Google", "Amazon", "Facebook", "Bloomberg", "Airbnb"],
+    "function_name": "is_valid",
+    "signature": "def is_valid(s: str) -> bool:",
+    "description": "Given a string containing only '(', ')', '{', '}', '[', ']', determine if the input string is valid. Open brackets must be closed by the same type of bracket in the correct order.",
+    "key_insight": "Use a stack. Push open brackets. On a close bracket, check if the top of the stack is the matching open bracket. At the end the stack must be empty.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "common_mistakes": [
+      "Not checking if the stack is empty before popping — can IndexError on ')' with empty stack",
+      "Forgetting to check that the stack is empty at the end",
+      "Using a counter instead of a stack (fails on '{[}]')"
+    ],
+    "hints": [
+      "What data structure matches the last-opened bracket to the first-closed?",
+      "Push open brackets. When you see a close bracket, the stack top must be its pair.",
+      "mapping = {')':'(', '}':'{', ']':'['}. If stack is empty or top != mapping[c]: return False."
+    ],
+    "examples": [
+      {"input": {"s": "()"}, "output": true},
+      {"input": {"s": "()[]{}"}, "output": true},
+      {"input": {"s": "(]"}, "output": false}
+    ],
+    "test_cases": [
+      {"input": {"s": "()"}, "expected": true},
+      {"input": {"s": "()[]{}"}, "expected": true},
+      {"input": {"s": "(]"}, "expected": false},
+      {"input": {"s": "([)]"}, "expected": false},
+      {"input": {"s": "{[]}"}, "expected": true},
+      {"input": {"s": "]"}, "expected": false}
+    ]
+  },
+  {
+    "id": 11,
+    "title": "Climbing Stairs",
+    "frequency": 88,
+    "difficulty": "Easy",
+    "pattern": "Dynamic Programming 1D",
+    "tags": ["dynamic programming", "math", "memoization"],
+    "companies": ["Amazon", "Google", "Apple", "Adobe"],
+    "function_name": "climb_stairs",
+    "signature": "def climb_stairs(n: int) -> int:",
+    "description": "You are climbing a staircase with n steps. Each time you can climb 1 or 2 steps. How many distinct ways can you climb to the top?",
+    "key_insight": "It's Fibonacci! ways(n) = ways(n-1) + ways(n-2). You can reach step n from step n-1 (take 1 step) or step n-2 (take 2 steps).",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1) with rolling variables",
+    "common_mistakes": [
+      "Using full DP array when two rolling variables suffice (unnecessary space)",
+      "Wrong base case: climb_stairs(1)=1, climb_stairs(2)=2",
+      "Off-by-one on the loop range"
+    ],
+    "hints": [
+      "How many ways are there to reach step n from earlier steps?",
+      "From step n, you came from n-1 or n-2. So ways(n) = ways(n-1) + ways(n-2).",
+      "Base cases: n=1 → 1, n=2 → 2. Use two variables, iterate."
+    ],
+    "examples": [
+      {"input": {"n": 2}, "output": 2},
+      {"input": {"n": 3}, "output": 3}
+    ],
+    "test_cases": [
+      {"input": {"n": 1}, "expected": 1},
+      {"input": {"n": 2}, "expected": 2},
+      {"input": {"n": 3}, "expected": 3},
+      {"input": {"n": 5}, "expected": 8},
+      {"input": {"n": 10}, "expected": 89}
+    ]
+  },
+  {
+    "id": 12,
+    "title": "Binary Search",
+    "frequency": 88,
+    "difficulty": "Easy",
+    "pattern": "Binary Search",
+    "tags": ["array", "binary search"],
+    "companies": ["Google", "Facebook", "Amazon", "Microsoft"],
+    "function_name": "search",
+    "signature": "def search(nums: List[int], target: int) -> int:",
+    "description": "Given a sorted array of distinct integers and a target, return the index of the target. If not found, return -1. Must run in O(log n).",
+    "key_insight": "Halve the search space each step. If nums[mid] < target, search right half; if > target, search left half; if equal, return mid.",
+    "time_complexity": "O(log n)",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Using left < right instead of left <= right (misses single-element arrays)",
+      "Infinite loop when mid doesn't converge: use mid = left + (right - left) // 2",
+      "Returning mid when the loop ends instead of -1"
+    ],
+    "hints": [
+      "How do you eliminate half the array on each iteration?",
+      "Compare target to the middle element. Adjust left or right accordingly.",
+      "left, right = 0, len(nums)-1. while left <= right: mid = (l+r)//2. Check nums[mid]."
+    ],
+    "examples": [
+      {"input": {"nums": [-1,0,3,5,9,12], "target": 9}, "output": 4},
+      {"input": {"nums": [-1,0,3,5,9,12], "target": 2}, "output": -1}
+    ],
+    "test_cases": [
+      {"input": {"nums": [-1,0,3,5,9,12], "target": 9}, "expected": 4},
+      {"input": {"nums": [-1,0,3,5,9,12], "target": 2}, "expected": -1},
+      {"input": {"nums": [5], "target": 5}, "expected": 0},
+      {"input": {"nums": [5], "target": -5}, "expected": -1},
+      {"input": {"nums": [2,5], "target": 5}, "expected": 1}
+    ]
+  },
+  {
+    "id": 13,
+    "title": "Product of Array Except Self",
+    "frequency": 88,
+    "difficulty": "Medium",
+    "pattern": "Array / Prefix Product",
+    "tags": ["array", "prefix product"],
+    "companies": ["Amazon", "Facebook", "Microsoft", "Apple", "Lyft"],
+    "function_name": "product_except_self",
+    "signature": "def product_except_self(nums: List[int]) -> List[int]:",
+    "description": "Given an integer array, return an array where output[i] is the product of all elements except nums[i]. Must run in O(n) without using division.",
+    "key_insight": "Two passes: first fill result with left-prefix products, then multiply in right-suffix products on a second right-to-left pass using a running variable.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1) excluding output array",
+    "common_mistakes": [
+      "Using division (not allowed, fails when a zero is present)",
+      "Allocating two extra arrays instead of using a single running variable for the suffix",
+      "Mixing up which direction the prefix/suffix runs"
+    ],
+    "hints": [
+      "What does output[i] need? Everything to the left multiplied by everything to the right.",
+      "Pass 1 (left to right): result[i] = product of all nums[0..i-1]. Pass 2 (right to left): multiply in suffix product.",
+      "Use a running 'right' variable initialized to 1. result[i] *= right; right *= nums[i]."
+    ],
+    "examples": [
+      {"input": {"nums": [1,2,3,4]}, "output": [24,12,8,6]},
+      {"input": {"nums": [-1,1,0,-3,3]}, "output": [0,0,9,0,0]}
+    ],
+    "test_cases": [
+      {"input": {"nums": [1,2,3,4]}, "expected": [24,12,8,6]},
+      {"input": {"nums": [-1,1,0,-3,3]}, "expected": [0,0,9,0,0]},
+      {"input": {"nums": [1,0]}, "expected": [0,1]},
+      {"input": {"nums": [2,3]}, "expected": [3,2]}
+    ]
+  },
+  {
+    "id": 14,
+    "title": "Group Anagrams",
+    "frequency": 85,
+    "difficulty": "Medium",
+    "pattern": "Hash Map",
+    "tags": ["array", "hash map", "string", "sorting"],
+    "companies": ["Amazon", "Facebook", "Google", "Uber", "Bloomberg"],
+    "function_name": "group_anagrams",
+    "signature": "def group_anagrams(strs: List[str]) -> List[List[str]]:",
+    "description": "Given an array of strings, group the anagrams together. You can return the answer in any order.",
+    "key_insight": "Anagrams have the same sorted form. Use sorted(word) as a key in a defaultdict(list).",
+    "time_complexity": "O(n * k log k) where k = max word length",
+    "space_complexity": "O(n * k)",
+    "common_mistakes": [
+      "Comparing every pair of strings: O(n² * k log k)",
+      "Using the word itself as a key instead of its sorted form",
+      "Not using defaultdict (forgetting to initialize the list)"
+    ],
+    "hints": [
+      "What uniquely identifies an anagram group?",
+      "Sort each string — all anagrams will have the same sorted key.",
+      "d = defaultdict(list). For each s: d[tuple(sorted(s))].append(s). Return list(d.values())."
+    ],
+    "examples": [
+      {"input": {"strs": ["eat","tea","tan","ate","nat","bat"]}, "output": [["bat"],["nat","tan"],["ate","eat","tea"]]}
+    ],
+    "test_cases": [
+      {"input": {"strs": ["eat","tea","tan","ate","nat","bat"]}, "expected": [["ate","eat","tea"],["bat"],["nat","tan"]], "comparison": "sorted_groups"},
+      {"input": {"strs": [""]}, "expected": [[""]]},
+      {"input": {"strs": ["a"]}, "expected": [["a"]]}
+    ]
+  },
+  {
+    "id": 15,
+    "title": "Top K Frequent Elements",
+    "frequency": 87,
+    "difficulty": "Medium",
+    "pattern": "Heap / Bucket Sort",
+    "tags": ["array", "hash map", "heap", "bucket sort"],
+    "companies": ["Amazon", "Facebook", "Google", "Yelp"],
+    "function_name": "top_k_frequent",
+    "signature": "def top_k_frequent(nums: List[int], k: int) -> List[int]:",
+    "description": "Given an integer array and an integer k, return the k most frequent elements. You may return the answer in any order.",
+    "key_insight": "Count frequencies with Counter, then use heapq.nlargest or bucket sort. nlargest is O(n log k); bucket sort achieves O(n).",
+    "time_complexity": "O(n log k) with heap, O(n) with bucket sort",
+    "space_complexity": "O(n)",
+    "common_mistakes": [
+      "Sorting all elements by frequency: O(n log n) when O(n log k) is achievable",
+      "Returning frequencies instead of the elements themselves",
+      "Using max-heap where a min-heap of size k is more efficient"
+    ],
+    "hints": [
+      "How do you efficiently find the top-k items by frequency?",
+      "Count with Counter. Use heapq.nlargest(k, count, key=count.get).",
+      "Or: bucket sort where bucket[freq] holds all numbers with that frequency."
+    ],
+    "examples": [
+      {"input": {"nums": [1,1,1,2,2,3], "k": 2}, "output": [1,2]},
+      {"input": {"nums": [1], "k": 1}, "output": [1]}
+    ],
+    "test_cases": [
+      {"input": {"nums": [1,1,1,2,2,3], "k": 2}, "expected": [1,2], "comparison": "any_order"},
+      {"input": {"nums": [1], "k": 1}, "expected": [1]},
+      {"input": {"nums": [1,2], "k": 2}, "expected": [1,2], "comparison": "any_order"}
+    ]
+  },
+  {
+    "id": 16,
+    "title": "Longest Consecutive Sequence",
+    "frequency": 80,
+    "difficulty": "Medium",
+    "pattern": "Hash Map / Set",
+    "tags": ["array", "hash map", "set"],
+    "companies": ["Google", "Facebook", "Amazon"],
+    "function_name": "longest_consecutive",
+    "signature": "def longest_consecutive(nums: List[int]) -> int:",
+    "description": "Given an unsorted array of integers, return the length of the longest consecutive elements sequence. Must run in O(n).",
+    "key_insight": "Put all numbers in a set. For each number n, if n-1 is NOT in the set, it's the start of a sequence. Count forward (n+1, n+2, …) until you leave the set.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "common_mistakes": [
+      "Sorting first — works but O(n log n), not O(n)",
+      "Not checking for the sequence start (n-1 not in set) — causes O(n²) without this optimization",
+      "Forgetting to handle duplicates (the set removes them automatically)"
+    ],
+    "hints": [
+      "How do you find sequences without sorting?",
+      "Use a set. Only start counting from a number n if n-1 is not in the set.",
+      "num_set = set(nums). For each n where n-1 not in num_set, count n, n+1, n+2, … in set."
+    ],
+    "examples": [
+      {"input": {"nums": [100,4,200,1,3,2]}, "output": 4},
+      {"input": {"nums": [0,3,7,2,5,8,4,6,0,1]}, "output": 9}
+    ],
+    "test_cases": [
+      {"input": {"nums": [100,4,200,1,3,2]}, "expected": 4},
+      {"input": {"nums": [0,3,7,2,5,8,4,6,0,1]}, "expected": 9},
+      {"input": {"nums": []}, "expected": 0},
+      {"input": {"nums": [1]}, "expected": 1}
+    ]
+  },
+  {
+    "id": 17,
+    "title": "3Sum",
+    "frequency": 89,
+    "difficulty": "Medium",
+    "pattern": "Two Pointers",
+    "tags": ["array", "two pointers", "sorting"],
+    "companies": ["Facebook", "Amazon", "Google", "Microsoft", "Bloomberg"],
+    "function_name": "three_sum",
+    "signature": "def three_sum(nums: List[int]) -> List[List[int]]:",
+    "description": "Given an integer array, return all unique triplets [nums[i], nums[j], nums[k]] such that i, j, k are distinct indices and nums[i] + nums[j] + nums[k] == 0.",
+    "key_insight": "Sort the array. Fix one element, then use two pointers on the rest. Skip duplicates at each pointer position to avoid repeats.",
+    "time_complexity": "O(n²)",
+    "space_complexity": "O(1) excluding output",
+    "common_mistakes": [
+      "Not skipping duplicates → duplicate triplets in result",
+      "Trying a hash-set approach without sorting first",
+      "Forgetting to advance both pointers after finding a valid triplet"
+    ],
+    "hints": [
+      "Can you reduce this to Two Sum by fixing one element?",
+      "Sort. For each i, use two pointers left=i+1, right=end. Move based on sum vs 0.",
+      "Skip duplicates: if nums[i]==nums[i-1] skip i. After finding a triplet, skip equal left/right values."
+    ],
+    "examples": [
+      {"input": {"nums": [-1,0,1,2,-1,-4]}, "output": [[-1,-1,2],[-1,0,1]]},
+      {"input": {"nums": [0,0,0]}, "output": [[0,0,0]]}
+    ],
+    "test_cases": [
+      {"input": {"nums": [-1,0,1,2,-1,-4]}, "expected": [[-1,-1,2],[-1,0,1]], "comparison": "set_of_sorted_tuples"},
+      {"input": {"nums": [0,0,0]}, "expected": [[0,0,0]], "comparison": "set_of_sorted_tuples"},
+      {"input": {"nums": []}, "expected": []},
+      {"input": {"nums": [0,1,1]}, "expected": []}
+    ]
+  },
+  {
+    "id": 18,
+    "title": "Container With Most Water",
+    "frequency": 85,
+    "difficulty": "Medium",
+    "pattern": "Two Pointers",
+    "tags": ["array", "two pointers", "greedy"],
+    "companies": ["Amazon", "Google", "Facebook", "Bloomberg"],
+    "function_name": "max_area",
+    "signature": "def max_area(height: List[int]) -> int:",
+    "description": "Given n non-negative integers representing the height of vertical lines, find two lines that together with the x-axis form a container that holds the most water.",
+    "key_insight": "Two pointers from both ends. Water = min(h[l], h[r]) * (r - l). Always move the shorter wall inward — moving the taller one can only decrease area.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Moving the taller pointer — you should always move the shorter one",
+      "Using O(n²) brute force checking all pairs",
+      "Forgetting to multiply by the width (r - l)"
+    ],
+    "hints": [
+      "Width decreases as pointers converge — how do you maximize height?",
+      "Move the shorter wall inward. Moving the taller wall can't improve the limiting factor.",
+      "while left < right: area = min(h[l],h[r])*(r-l). Move whichever side is shorter."
+    ],
+    "examples": [
+      {"input": {"height": [1,8,6,2,5,4,8,3,7]}, "output": 49},
+      {"input": {"height": [1,1]}, "output": 1}
+    ],
+    "test_cases": [
+      {"input": {"height": [1,8,6,2,5,4,8,3,7]}, "expected": 49},
+      {"input": {"height": [1,1]}, "expected": 1},
+      {"input": {"height": [4,3,2,1,4]}, "expected": 16},
+      {"input": {"height": [1,2,1]}, "expected": 2}
+    ]
+  },
+  {
+    "id": 19,
+    "title": "Longest Repeating Character Replacement",
+    "frequency": 79,
+    "difficulty": "Medium",
+    "pattern": "Sliding Window",
+    "tags": ["string", "sliding window", "hash map"],
+    "companies": ["Google", "Amazon", "Uber"],
+    "function_name": "character_replacement",
+    "signature": "def character_replacement(s: str, k: int) -> int:",
+    "description": "Given a string s and an integer k, you can replace at most k characters. Return the length of the longest substring containing the same letter you can get after replacements.",
+    "key_insight": "Window is valid when (window_size - max_frequency_in_window) <= k. Track max_count; only ever increase it (safe shortcut — we only care about windows larger than the best seen).",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1) — 26 chars max",
+    "common_mistakes": [
+      "Recomputing max_count by scanning the whole count dict on each step: O(26n)",
+      "Shrinking the window when it's invalid instead of just not expanding result",
+      "Tracking the window incorrectly (window size = right - left + 1)"
+    ],
+    "hints": [
+      "What makes a window valid? (window_size - max_char_count) <= k",
+      "Track the count of each character and the max count in the window.",
+      "If window_size - max_count > k, slide left by 1. Always track max result."
+    ],
+    "examples": [
+      {"input": {"s": "ABAB", "k": 2}, "output": 4},
+      {"input": {"s": "AABABBA", "k": 1}, "output": 4}
+    ],
+    "test_cases": [
+      {"input": {"s": "ABAB", "k": 2}, "expected": 4},
+      {"input": {"s": "AABABBA", "k": 1}, "expected": 4},
+      {"input": {"s": "AAAA", "k": 0}, "expected": 4},
+      {"input": {"s": "ABCD", "k": 2}, "expected": 3}
+    ]
+  },
+  {
+    "id": 20,
+    "title": "Permutation in String",
+    "frequency": 80,
+    "difficulty": "Medium",
+    "pattern": "Sliding Window",
+    "tags": ["string", "sliding window", "hash map"],
+    "companies": ["Amazon", "Microsoft", "Bloomberg"],
+    "function_name": "check_inclusion",
+    "signature": "def check_inclusion(s1: str, s2: str) -> bool:",
+    "description": "Given two strings s1 and s2, return true if s2 contains a permutation of s1. In other words, check if one of s1's permutations is a substring of s2.",
+    "key_insight": "Fixed-size sliding window of length len(s1). Compare character frequency maps of window and s1. Use two Counter dicts and check equality.",
+    "time_complexity": "O(n) where n = len(s2)",
+    "space_complexity": "O(1) — 26 chars",
+    "common_mistakes": [
+      "Generating all permutations of s1: exponential time",
+      "Not using a fixed-size window — the window must always be exactly len(s1)",
+      "Comparing sorted strings on each step: O(n * k log k)"
+    ],
+    "hints": [
+      "All permutations of s1 have the same character counts. What to check?",
+      "Use a fixed-size sliding window of length len(s1). Compare Counter(window) to Counter(s1).",
+      "Slide: add s2[right] to window, remove s2[right - len(s1)] when window exceeds size."
+    ],
+    "examples": [
+      {"input": {"s1": "ab", "s2": "eidbaooo"}, "output": true},
+      {"input": {"s1": "ab", "s2": "eidboaoo"}, "output": false}
+    ],
+    "test_cases": [
+      {"input": {"s1": "ab", "s2": "eidbaooo"}, "expected": true},
+      {"input": {"s1": "ab", "s2": "eidboaoo"}, "expected": false},
+      {"input": {"s1": "adc", "s2": "dcda"}, "expected": true},
+      {"input": {"s1": "hello", "s2": "ooolleoooleh"}, "expected": false}
+    ]
+  },
+  {
+    "id": 21,
+    "title": "Minimum Window Substring",
+    "frequency": 83,
+    "difficulty": "Hard",
+    "pattern": "Sliding Window",
+    "tags": ["string", "sliding window", "hash map"],
+    "companies": ["Facebook", "Amazon", "Google", "Uber", "Snapchat"],
+    "function_name": "min_window",
+    "signature": "def min_window(s: str, t: str) -> str:",
+    "description": "Given strings s and t, return the minimum window substring of s that contains every character in t (including duplicates). Return empty string if impossible.",
+    "key_insight": "Expand right until window is valid (contains all of t). Then shrink from left to minimize. Track 'have' vs 'need' counts to know when the window is valid in O(1).",
+    "time_complexity": "O(n + m)",
+    "space_complexity": "O(n + m)",
+    "common_mistakes": [
+      "Checking if window is valid by re-scanning it each time: O(n * m)",
+      "Not handling duplicate characters in t (need freq counts, not just presence)",
+      "Off-by-one in the result substring: result = s[left:right+1]"
+    ],
+    "hints": [
+      "How do you check if a window contains all of t efficiently?",
+      "Track 'have' (chars meeting required count) vs 'need' (len of distinct required chars). Window is valid when have == need.",
+      "Expand right. When valid, shrink left to find minimum. Update result when valid."
+    ],
+    "examples": [
+      {"input": {"s": "ADOBECODEBANC", "t": "ABC"}, "output": "BANC"},
+      {"input": {"s": "a", "t": "a"}, "output": "a"}
+    ],
+    "test_cases": [
+      {"input": {"s": "ADOBECODEBANC", "t": "ABC"}, "expected": "BANC"},
+      {"input": {"s": "a", "t": "a"}, "expected": "a"},
+      {"input": {"s": "a", "t": "aa"}, "expected": ""},
+      {"input": {"s": "abc", "t": "b"}, "expected": "b"}
+    ]
+  },
+  {
+    "id": 22,
+    "title": "Find Minimum in Rotated Sorted Array",
+    "frequency": 84,
+    "difficulty": "Medium",
+    "pattern": "Binary Search",
+    "tags": ["array", "binary search"],
+    "companies": ["Amazon", "Microsoft", "Facebook", "Google"],
+    "function_name": "find_min",
+    "signature": "def find_min(nums: List[int]) -> int:",
+    "description": "Given a sorted array rotated at some pivot, find the minimum element. The array has no duplicates.",
+    "key_insight": "If nums[mid] > nums[right], the minimum is in the right half (left half is fully sorted and larger). Otherwise it's in the left half (including mid).",
+    "time_complexity": "O(log n)",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Comparing mid to left instead of right — comparing to right is cleaner",
+      "Using left <= right instead of left < right",
+      "Forgetting that the array might not be rotated at all"
+    ],
+    "hints": [
+      "The minimum is always at the inflection point of the rotation.",
+      "Compare nums[mid] to nums[right]. If mid > right, min is in right half.",
+      "while left < right: if nums[mid] > nums[right]: left = mid+1, else: right = mid"
+    ],
+    "examples": [
+      {"input": {"nums": [3,4,5,1,2]}, "output": 1},
+      {"input": {"nums": [4,5,6,7,0,1,2]}, "output": 0}
+    ],
+    "test_cases": [
+      {"input": {"nums": [3,4,5,1,2]}, "expected": 1},
+      {"input": {"nums": [4,5,6,7,0,1,2]}, "expected": 0},
+      {"input": {"nums": [11,13,15,17]}, "expected": 11},
+      {"input": {"nums": [2,1]}, "expected": 1},
+      {"input": {"nums": [1]}, "expected": 1}
+    ]
+  },
+  {
+    "id": 23,
+    "title": "Search in Rotated Sorted Array",
+    "frequency": 87,
+    "difficulty": "Medium",
+    "pattern": "Binary Search",
+    "tags": ["array", "binary search"],
+    "companies": ["Amazon", "Facebook", "Microsoft", "Bloomberg", "Uber"],
+    "function_name": "search_rotated",
+    "signature": "def search_rotated(nums: List[int], target: int) -> int:",
+    "description": "Given a sorted array rotated at an unknown pivot and a target value, return the index of target. Return -1 if not found. Must run in O(log n).",
+    "key_insight": "One half of the array is always sorted. Determine which half is sorted (compare nums[left] to nums[mid]), then check if target falls in that half. Binary search on the sorted half.",
+    "time_complexity": "O(log n)",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Not correctly identifying which half is sorted",
+      "Forgetting the >= when checking if target is in the sorted half (boundary values)",
+      "Applying standard binary search without accounting for the rotation"
+    ],
+    "hints": [
+      "One of the two halves is always fully sorted. Which one?",
+      "If nums[left] <= nums[mid], the left half is sorted. Check if target is in [left, mid).",
+      "Otherwise right half is sorted. Check if target is in (mid, right]."
+    ],
+    "examples": [
+      {"input": {"nums": [4,5,6,7,0,1,2], "target": 0}, "output": 4},
+      {"input": {"nums": [4,5,6,7,0,1,2], "target": 3}, "output": -1}
+    ],
+    "test_cases": [
+      {"input": {"nums": [4,5,6,7,0,1,2], "target": 0}, "expected": 4},
+      {"input": {"nums": [4,5,6,7,0,1,2], "target": 3}, "expected": -1},
+      {"input": {"nums": [1], "target": 0}, "expected": -1},
+      {"input": {"nums": [1,3], "target": 3}, "expected": 1},
+      {"input": {"nums": [3,1], "target": 1}, "expected": 1}
+    ]
+  },
+  {
+    "id": 24,
+    "title": "Koko Eating Bananas",
+    "frequency": 75,
+    "difficulty": "Medium",
+    "pattern": "Binary Search on Answer",
+    "tags": ["array", "binary search"],
+    "companies": ["Amazon", "Facebook", "Google"],
+    "function_name": "min_eating_speed",
+    "signature": "def min_eating_speed(piles: List[int], h: int) -> int:",
+    "description": "Koko can eat k bananas per hour. Given piles of bananas and h hours, find the minimum k such that Koko can eat all bananas within h hours.",
+    "key_insight": "Binary search on the answer (k). For a given speed, hours = sum(ceil(pile/k)). Check if this <= h. Search in range [1, max(piles)].",
+    "time_complexity": "O(n log m) where m = max(piles)",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Linear search instead of binary search on k",
+      "Forgetting to use ceil: math.ceil(pile/k) or (pile + k - 1) // k",
+      "Setting the search space incorrectly (right should be max(piles), not sum(piles))"
+    ],
+    "hints": [
+      "What's the range of valid speeds? What's the minimum and maximum?",
+      "Binary search on k from 1 to max(piles). For each k, compute hours needed.",
+      "hours = sum(math.ceil(p/k) for p in piles). If hours <= h, try smaller k."
+    ],
+    "examples": [
+      {"input": {"piles": [3,6,7,11], "h": 8}, "output": 4},
+      {"input": {"piles": [30,11,23,4,20], "h": 5}, "output": 30}
+    ],
+    "test_cases": [
+      {"input": {"piles": [3,6,7,11], "h": 8}, "expected": 4},
+      {"input": {"piles": [30,11,23,4,20], "h": 5}, "expected": 30},
+      {"input": {"piles": [30,11,23,4,20], "h": 6}, "expected": 23},
+      {"input": {"piles": [1,1,1,999999999], "h": 10}, "expected": 142857143}
+    ]
+  },
+  {
+    "id": 25,
+    "title": "Daily Temperatures",
+    "frequency": 83,
+    "difficulty": "Medium",
+    "pattern": "Stack (Monotonic)",
+    "tags": ["array", "stack", "monotonic stack"],
+    "companies": ["Amazon", "Google", "Facebook", "Bloomberg"],
+    "function_name": "daily_temperatures",
+    "signature": "def daily_temperatures(temperatures: List[int]) -> List[int]:",
+    "description": "Given an array of temperatures, return an array result where result[i] is the number of days you have to wait after day i to get a warmer temperature. If no warmer day exists, result[i] = 0.",
+    "key_insight": "Monotonic decreasing stack of indices. Push each day's index. When a warmer day is found, pop all smaller-temp indices and fill their answer.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "common_mistakes": [
+      "O(n²) brute force: for each day, scan forward for a warmer day",
+      "Storing temperatures instead of indices on the stack",
+      "Not handling leftover indices in the stack at the end (they get answer 0)"
+    ],
+    "hints": [
+      "What pattern emerges when you need 'next greater element'?",
+      "Monotonic stack: push index. When temperatures[i] > temperatures[stack.top()], pop and record distance.",
+      "result[idx] = i - idx for each popped index. Remaining stack indices stay 0."
+    ],
+    "examples": [
+      {"input": {"temperatures": [73,74,75,71,69,72,76,73]}, "output": [1,1,4,2,1,1,0,0]},
+      {"input": {"temperatures": [30,40,50,60]}, "output": [1,1,1,0]}
+    ],
+    "test_cases": [
+      {"input": {"temperatures": [73,74,75,71,69,72,76,73]}, "expected": [1,1,4,2,1,1,0,0]},
+      {"input": {"temperatures": [30,40,50,60]}, "expected": [1,1,1,0]},
+      {"input": {"temperatures": [30,60,90]}, "expected": [1,1,0]},
+      {"input": {"temperatures": [90,60,30]}, "expected": [0,0,0]}
+    ]
+  },
+  {
+    "id": 26,
+    "title": "Generate Parentheses",
+    "frequency": 84,
+    "difficulty": "Medium",
+    "pattern": "Backtracking",
+    "tags": ["string", "backtracking", "dynamic programming"],
+    "companies": ["Google", "Amazon", "Facebook", "Bloomberg"],
+    "function_name": "generate_parenthesis",
+    "signature": "def generate_parenthesis(n: int) -> List[str]:",
+    "description": "Given n pairs of parentheses, generate all combinations of well-formed parentheses.",
+    "key_insight": "Backtracking with constraints: add '(' if open_count < n; add ')' if close_count < open_count. Only valid strings are built — no pruning needed.",
+    "time_complexity": "O(4^n / sqrt(n)) — Catalan number",
+    "space_complexity": "O(n) recursion depth",
+    "common_mistakes": [
+      "Generating all 2^(2n) combinations and filtering — exponentially worse",
+      "Adding ')' when close_count >= open_count — creates invalid strings",
+      "Not recognizing this as a backtracking problem"
+    ],
+    "hints": [
+      "When is it safe to add '(' vs ')'?",
+      "Add '(' if open < n. Add ')' if close < open. Stop when len(s) == 2n.",
+      "def bt(s, open, close): if len(s)==2n: add to result. Try '(' and ')'."
+    ],
+    "examples": [
+      {"input": {"n": 3}, "output": ["((()))","(()())","(())()","()(())","()()()"]},
+      {"input": {"n": 1}, "output": ["()"]}
+    ],
+    "test_cases": [
+      {"input": {"n": 3}, "expected": ["((()))","(()())","(())()","()(())","()()()"], "comparison": "any_order"},
+      {"input": {"n": 1}, "expected": ["()"]},
+      {"input": {"n": 2}, "expected": ["(())","()()"], "comparison": "any_order"}
+    ]
+  },
+  {
+    "id": 27,
+    "title": "House Robber",
+    "frequency": 87,
+    "difficulty": "Medium",
+    "pattern": "Dynamic Programming 1D",
+    "tags": ["array", "dynamic programming"],
+    "companies": ["Amazon", "Google", "Microsoft", "Airbnb"],
+    "function_name": "rob",
+    "signature": "def rob(nums: List[int]) -> int:",
+    "description": "You are a robber. Each house has money. You cannot rob two adjacent houses. Return the maximum amount you can rob tonight.",
+    "key_insight": "dp[i] = max(dp[i-1], dp[i-2] + nums[i]). At each house: skip it (take dp[i-1]) or rob it (take dp[i-2] + nums[i]). Use two rolling variables.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Using O(n) DP array when two variables suffice",
+      "Not initializing correctly for n=1",
+      "Trying dp[i] = max(dp[i-1], dp[i-2] + nums[i]) but forgetting the base cases"
+    ],
+    "hints": [
+      "At each house, what are your two choices?",
+      "Rob it (prev2 + nums[i]) or skip it (prev1). Take the max.",
+      "prev2, prev1 = 0, 0. For each n: prev2, prev1 = prev1, max(prev1, prev2+n)"
+    ],
+    "examples": [
+      {"input": {"nums": [1,2,3,1]}, "output": 4},
+      {"input": {"nums": [2,7,9,3,1]}, "output": 12}
+    ],
+    "test_cases": [
+      {"input": {"nums": [1,2,3,1]}, "expected": 4},
+      {"input": {"nums": [2,7,9,3,1]}, "expected": 12},
+      {"input": {"nums": [1]}, "expected": 1},
+      {"input": {"nums": [2,1]}, "expected": 2},
+      {"input": {"nums": [1,2]}, "expected": 2}
+    ]
+  },
+  {
+    "id": 28,
+    "title": "Coin Change",
+    "frequency": 88,
+    "difficulty": "Medium",
+    "pattern": "Dynamic Programming 1D",
+    "tags": ["array", "dynamic programming", "breadth-first search"],
+    "companies": ["Amazon", "Google", "Facebook", "Microsoft", "Goldman Sachs"],
+    "function_name": "coin_change",
+    "signature": "def coin_change(coins: List[int], amount: int) -> int:",
+    "description": "Given a list of coin denominations and a target amount, return the fewest number of coins needed to make that amount. Return -1 if it's not possible.",
+    "key_insight": "Bottom-up DP. dp[a] = min coins to make amount a. For each amount, try every coin: dp[a] = min(dp[a], dp[a-coin]+1). Initialize dp[0]=0, rest=infinity.",
+    "time_complexity": "O(amount * n_coins)",
+    "space_complexity": "O(amount)",
+    "common_mistakes": [
+      "Initializing dp[0] = 1 instead of 0 (0 coins needed to make 0)",
+      "Using a greedy approach — greedy fails for coins like [1,3,4], amount=6 (greedy: 4+1+1=3 coins, optimal: 3+3=2 coins)",
+      "Forgetting to check if dp[amount] is still infinity (return -1)"
+    ],
+    "hints": [
+      "Can you build up the answer from smaller sub-problems?",
+      "dp[0]=0. For each amount a from 1 to amount: dp[a] = min(dp[a-c]+1 for each coin c if a-c>=0).",
+      "Return dp[amount] if not infinity, else -1."
+    ],
+    "examples": [
+      {"input": {"coins": [1,2,5], "amount": 11}, "output": 3},
+      {"input": {"coins": [2], "amount": 3}, "output": -1}
+    ],
+    "test_cases": [
+      {"input": {"coins": [1,2,5], "amount": 11}, "expected": 3},
+      {"input": {"coins": [2], "amount": 3}, "expected": -1},
+      {"input": {"coins": [1], "amount": 0}, "expected": 0},
+      {"input": {"coins": [1,5,11], "amount": 15}, "expected": 3},
+      {"input": {"coins": [1,3,4], "amount": 6}, "expected": 2}
+    ]
+  },
+  {
+    "id": 29,
+    "title": "Longest Increasing Subsequence",
+    "frequency": 84,
+    "difficulty": "Medium",
+    "pattern": "Dynamic Programming 1D",
+    "tags": ["array", "dynamic programming", "binary search"],
+    "companies": ["Google", "Amazon", "Microsoft", "Facebook"],
+    "function_name": "length_of_lis",
+    "signature": "def length_of_lis(nums: List[int]) -> int:",
+    "description": "Given an integer array, return the length of the longest strictly increasing subsequence.",
+    "key_insight": "O(n²) DP: dp[i] = max(dp[j]+1 for j<i if nums[j]<nums[i]). O(n log n): maintain a 'tails' array and use bisect to find where each element slots in.",
+    "time_complexity": "O(n²) DP or O(n log n) with patience sorting",
+    "space_complexity": "O(n)",
+    "common_mistakes": [
+      "Returning max(dp) before computing all values",
+      "Using <= instead of < (must be strictly increasing)",
+      "Confusing the tails array with the actual LIS itself"
+    ],
+    "hints": [
+      "For each element, what's the longest subsequence ending here?",
+      "dp[i] = 1 + max(dp[j] for j<i if nums[j]<nums[i], default 0). Return max(dp).",
+      "O(n log n): maintain tails[] in sorted order. bisect_left to find replacement position."
+    ],
+    "examples": [
+      {"input": {"nums": [10,9,2,5,3,7,101,18]}, "output": 4},
+      {"input": {"nums": [0,1,0,3,2,3]}, "output": 4}
+    ],
+    "test_cases": [
+      {"input": {"nums": [10,9,2,5,3,7,101,18]}, "expected": 4},
+      {"input": {"nums": [0,1,0,3,2,3]}, "expected": 4},
+      {"input": {"nums": [7,7,7,7]}, "expected": 1},
+      {"input": {"nums": [1,3,6,7,9,4,10,5,6]}, "expected": 6}
+    ]
+  },
+  {
+    "id": 30,
+    "title": "Word Break",
+    "frequency": 85,
+    "difficulty": "Medium",
+    "pattern": "Dynamic Programming 1D",
+    "tags": ["string", "dynamic programming", "trie", "hash map"],
+    "companies": ["Google", "Amazon", "Facebook", "Bloomberg"],
+    "function_name": "word_break",
+    "signature": "def word_break(s: str, word_dict: List[str]) -> bool:",
+    "description": "Given a string s and a list of words (word_dict), return true if s can be segmented into a sequence of one or more dictionary words.",
+    "key_insight": "dp[i] = True if s[0:i] can be segmented. For each i, try all j<i: if dp[j] is True and s[j:i] is in the word set, then dp[i] = True.",
+    "time_complexity": "O(n² * m) where m = avg word length",
+    "space_complexity": "O(n + dict_size)",
+    "common_mistakes": [
+      "Using a set instead of checking substrings systematically",
+      "Not initializing dp[0] = True (empty string is always segmentable)",
+      "Using list for word_dict — convert to set for O(1) lookup"
+    ],
+    "hints": [
+      "Can you break this into subproblems? dp[i] = can s[0:i] be segmented?",
+      "dp[0]=True. For i in range(1, n+1): for j in range(i): if dp[j] and s[j:i] in word_set: dp[i]=True.",
+      "word_set = set(word_dict) for O(1) lookup."
+    ],
+    "examples": [
+      {"input": {"s": "leetcode", "word_dict": ["leet","code"]}, "output": true},
+      {"input": {"s": "applepenapple", "word_dict": ["apple","pen"]}, "output": true}
+    ],
+    "test_cases": [
+      {"input": {"s": "leetcode", "word_dict": ["leet","code"]}, "expected": true},
+      {"input": {"s": "applepenapple", "word_dict": ["apple","pen"]}, "expected": true},
+      {"input": {"s": "catsandog", "word_dict": ["cats","dog","sand","and","cat"]}, "expected": false},
+      {"input": {"s": "a", "word_dict": ["b"]}, "expected": false}
+    ]
+  },
+  {
+    "id": 31,
+    "title": "Unique Paths",
+    "frequency": 82,
+    "difficulty": "Medium",
+    "pattern": "Dynamic Programming 2D",
+    "tags": ["math", "dynamic programming", "combinatorics"],
+    "companies": ["Amazon", "Google", "Facebook", "Goldman Sachs"],
+    "function_name": "unique_paths",
+    "signature": "def unique_paths(m: int, n: int) -> int:",
+    "description": "A robot is on an m×n grid at the top-left corner. It can only move right or down. How many unique paths are there to the bottom-right corner?",
+    "key_insight": "dp[i][j] = dp[i-1][j] + dp[i][j-1]. First row and column are all 1s. Or use the math formula: C(m+n-2, m-1).",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(n) with 1D DP",
+    "common_mistakes": [
+      "Using O(m*n) space when O(n) rolling array suffices",
+      "Off-by-one on grid dimensions",
+      "Forgetting to initialize the first row/column to 1"
+    ],
+    "hints": [
+      "Paths to (i,j) = paths to (i-1,j) + paths to (i,j-1). What's the base case?",
+      "First row and column = 1. dp[i][j] = dp[i-1][j] + dp[i][j-1].",
+      "Space optimize: use a 1D array of size n and update in place."
+    ],
+    "examples": [
+      {"input": {"m": 3, "n": 7}, "output": 28},
+      {"input": {"m": 3, "n": 2}, "output": 3}
+    ],
+    "test_cases": [
+      {"input": {"m": 3, "n": 7}, "expected": 28},
+      {"input": {"m": 3, "n": 2}, "expected": 3},
+      {"input": {"m": 1, "n": 1}, "expected": 1},
+      {"input": {"m": 7, "n": 3}, "expected": 28}
+    ]
+  },
+  {
+    "id": 32,
+    "title": "Longest Common Subsequence",
+    "frequency": 80,
+    "difficulty": "Medium",
+    "pattern": "Dynamic Programming 2D",
+    "tags": ["string", "dynamic programming"],
+    "companies": ["Amazon", "Google", "Microsoft", "Bloomberg"],
+    "function_name": "longest_common_subsequence",
+    "signature": "def longest_common_subsequence(text1: str, text2: str) -> int:",
+    "description": "Given two strings, return the length of their longest common subsequence. A subsequence is a sequence derived by deleting some elements without changing the order.",
+    "key_insight": "If text1[i]==text2[j]: dp[i][j] = dp[i-1][j-1]+1. Else: dp[i][j] = max(dp[i-1][j], dp[i][j-1]). Use a 2D table with 1-indexed padding.",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(m * n), O(n) with space optimization",
+    "common_mistakes": [
+      "Confusing LCS (subsequence, not contiguous) with Longest Common Substring (contiguous)",
+      "Not padding the dp table with a row/column of zeros",
+      "Off-by-one: dp is (m+1) × (n+1)"
+    ],
+    "hints": [
+      "Two cases: chars match or they don't. What do you do in each case?",
+      "Match: dp[i][j] = dp[i-1][j-1]+1. No match: dp[i][j] = max(dp[i-1][j], dp[i][j-1]).",
+      "Build a 2D table, return dp[m][n]."
+    ],
+    "examples": [
+      {"input": {"text1": "abcde", "text2": "ace"}, "output": 3},
+      {"input": {"text1": "abc", "text2": "abc"}, "output": 3}
+    ],
+    "test_cases": [
+      {"input": {"text1": "abcde", "text2": "ace"}, "expected": 3},
+      {"input": {"text1": "abc", "text2": "abc"}, "expected": 3},
+      {"input": {"text1": "abc", "text2": "def"}, "expected": 0},
+      {"input": {"text1": "bl", "text2": "yby"}, "expected": 1}
+    ]
+  },
+  {
+    "id": 33,
+    "title": "Combination Sum",
+    "frequency": 85,
+    "difficulty": "Medium",
+    "pattern": "Backtracking",
+    "tags": ["array", "backtracking"],
+    "companies": ["Amazon", "Google", "Facebook", "Bloomberg"],
+    "function_name": "combination_sum",
+    "signature": "def combination_sum(candidates: List[int], target: int) -> List[List[int]]:",
+    "description": "Given a list of distinct integers (candidates) and a target, return all unique combinations that sum to target. Each number may be used unlimited times. Return in any order.",
+    "key_insight": "Backtracking: at each step, try adding each candidate starting from index i (not 0, to avoid reordering duplicates). Subtract from remaining and recurse.",
+    "time_complexity": "O(n^(t/m)) where t=target, m=min candidate",
+    "space_complexity": "O(t/m) recursion depth",
+    "common_mistakes": [
+      "Restarting from index 0 on each recursion — produces duplicate combinations like [2,2,3] and [2,3,2]",
+      "Not passing the current index to prevent going backwards",
+      "Forgetting the base case: remaining == 0 → save current combination"
+    ],
+    "hints": [
+      "How do you avoid generating duplicate orderings of the same combination?",
+      "Always start the loop from the current index i, not 0. This ensures non-decreasing order.",
+      "backtrack(start, path, remaining). If remaining==0 add path. Loop from start to n."
+    ],
+    "examples": [
+      {"input": {"candidates": [2,3,6,7], "target": 7}, "output": [[2,2,3],[7]]},
+      {"input": {"candidates": [2,3], "target": 6}, "output": [[2,2,2],[3,3]]}
+    ],
+    "test_cases": [
+      {"input": {"candidates": [2,3,6,7], "target": 7}, "expected": [[2,2,3],[7]], "comparison": "set_of_sorted_tuples"},
+      {"input": {"candidates": [2,3], "target": 6}, "expected": [[2,2,2],[3,3]], "comparison": "set_of_sorted_tuples"},
+      {"input": {"candidates": [2], "target": 1}, "expected": []}
+    ]
+  },
+  {
+    "id": 34,
+    "title": "Permutations",
+    "frequency": 86,
+    "difficulty": "Medium",
+    "pattern": "Backtracking",
+    "tags": ["array", "backtracking"],
+    "companies": ["Amazon", "Microsoft", "Google", "Bloomberg"],
+    "function_name": "permute",
+    "signature": "def permute(nums: List[int]) -> List[List[int]]:",
+    "description": "Given an array of distinct integers, return all possible permutations. You may return the answer in any order.",
+    "key_insight": "Backtracking: swap nums[i] with each nums[j] for j >= i, recurse on i+1, then swap back. Or use a 'remaining' list approach.",
+    "time_complexity": "O(n * n!)",
+    "space_complexity": "O(n) recursion depth",
+    "common_mistakes": [
+      "Appending a reference to current (mutable list) instead of a copy: result.append(list(current))",
+      "Not backtracking (undoing the choice after returning from recursion)",
+      "Generating duplicate permutations when the input has duplicates (different problem — Permutations II)"
+    ],
+    "hints": [
+      "At each position, which elements can go there?",
+      "Any element not yet used in the current path. Try each, recurse, then undo.",
+      "backtrack(path, remaining). If empty remaining: append copy of path. Else loop choices."
+    ],
+    "examples": [
+      {"input": {"nums": [1,2,3]}, "output": [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]},
+      {"input": {"nums": [0,1]}, "output": [[0,1],[1,0]]}
+    ],
+    "test_cases": [
+      {"input": {"nums": [1,2,3]}, "expected": [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]], "comparison": "set_of_tuples"},
+      {"input": {"nums": [0,1]}, "expected": [[0,1],[1,0]], "comparison": "set_of_tuples"},
+      {"input": {"nums": [1]}, "expected": [[1]]}
+    ]
+  },
+  {
+    "id": 35,
+    "title": "Subsets",
+    "frequency": 82,
+    "difficulty": "Medium",
+    "pattern": "Backtracking",
+    "tags": ["array", "backtracking", "bit manipulation"],
+    "companies": ["Amazon", "Facebook", "Google", "Bloomberg"],
+    "function_name": "subsets",
+    "signature": "def subsets(nums: List[int]) -> List[List[int]]:",
+    "description": "Given an integer array of unique elements, return all possible subsets (the power set). The solution set must not contain duplicate subsets.",
+    "key_insight": "Backtracking: at each index, choose to include or exclude. Or: iterate through nums and for each new number, add it to all existing subsets.",
+    "time_complexity": "O(n * 2^n)",
+    "space_complexity": "O(n * 2^n)",
+    "common_mistakes": [
+      "Appending a reference instead of a copy when adding to result",
+      "Starting from index 0 at each recursion — produces duplicate subsets",
+      "Forgetting to include the empty subset"
+    ],
+    "hints": [
+      "For each element, you either include it in a subset or you don't.",
+      "Backtrack(start, path): add copy of path. Loop from start, add nums[i], recurse i+1, pop.",
+      "Result starts with [[]] — the empty subset is always included."
+    ],
+    "examples": [
+      {"input": {"nums": [1,2,3]}, "output": [[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]]},
+      {"input": {"nums": [0]}, "output": [[],[0]]}
+    ],
+    "test_cases": [
+      {"input": {"nums": [1,2,3]}, "expected": [[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]], "comparison": "set_of_sorted_tuples"},
+      {"input": {"nums": [0]}, "expected": [[],[0]], "comparison": "set_of_sorted_tuples"}
+    ]
+  },
+  {
+    "id": 36,
+    "title": "Word Search",
+    "frequency": 81,
+    "difficulty": "Medium",
+    "pattern": "Backtracking",
+    "tags": ["array", "backtracking", "matrix", "dfs"],
+    "companies": ["Amazon", "Microsoft", "Bloomberg", "Uber"],
+    "function_name": "exist",
+    "signature": "def exist(board: List[List[str]], word: str) -> bool:",
+    "description": "Given an m×n grid of characters and a string word, return true if word exists in the grid. The word can be constructed from letters of sequentially adjacent cells (horizontally or vertically). Each cell may only be used once.",
+    "key_insight": "DFS + backtracking from each starting cell. Mark visited cells (e.g., set to '#') before recursing, then restore after. Return True as soon as the word is found.",
+    "time_complexity": "O(m * n * 4^L) where L = word length",
+    "space_complexity": "O(L) recursion depth",
+    "common_mistakes": [
+      "Not restoring the cell after backtracking — the cell stays marked visited",
+      "Checking all 8 directions instead of 4 (only up/down/left/right)",
+      "Forgetting to check boundary conditions and character match before recursing"
+    ],
+    "hints": [
+      "How do you avoid reusing a cell within the same path?",
+      "Mark board[r][c] = '#' before recursing. Restore it after. Check boundary + char match first.",
+      "Try all starting cells. DFS: if i==len(word) return True. Check bounds+char, mark, recurse 4 dirs, unmark."
+    ],
+    "examples": [
+      {"input": {"board": [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], "word": "ABCCED"}, "output": true},
+      {"input": {"board": [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], "word": "ABCB"}, "output": false}
+    ],
+    "test_cases": [
+      {"input": {"board": [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], "word": "ABCCED"}, "expected": true},
+      {"input": {"board": [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], "word": "SEE"}, "expected": true},
+      {"input": {"board": [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], "word": "ABCB"}, "expected": false},
+      {"input": {"board": [["a"]], "word": "a"}, "expected": true}
+    ]
+  },
+  {
+    "id": 37,
+    "title": "Trapping Rain Water",
+    "frequency": 82,
+    "difficulty": "Hard",
+    "pattern": "Two Pointers",
+    "tags": ["array", "two pointers", "dynamic programming", "stack"],
+    "companies": ["Amazon", "Google", "Facebook", "Bloomberg", "Goldman Sachs"],
+    "function_name": "trap",
+    "signature": "def trap(height: List[int]) -> int:",
+    "description": "Given n non-negative integers representing an elevation map, compute how much water it can trap after raining.",
+    "key_insight": "Two pointers. Water at position i = min(max_left, max_right) - height[i]. Move the pointer with the smaller max inward — you know that side's constraint.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "O(n) space prefix/suffix arrays work but are not optimal — two pointers achieves O(1)",
+      "Adding water even when height[i] > min boundary (would be negative, wrong)",
+      "Confusing left_max and right_max tracking"
+    ],
+    "hints": [
+      "Water trapped at index i is bounded by the shorter of the tallest bar on each side.",
+      "Two pointers: track left_max and right_max. Process the side with the smaller max.",
+      "If left_max < right_max: water += left_max - height[left] (if positive). Move left."
+    ],
+    "examples": [
+      {"input": {"height": [0,1,0,2,1,0,1,3,2,1,2,1]}, "output": 6},
+      {"input": {"height": [4,2,0,3,2,5]}, "output": 9}
+    ],
+    "test_cases": [
+      {"input": {"height": [0,1,0,2,1,0,1,3,2,1,2,1]}, "expected": 6},
+      {"input": {"height": [4,2,0,3,2,5]}, "expected": 9},
+      {"input": {"height": [1,0,1]}, "expected": 1},
+      {"input": {"height": [3,0,2,0,4]}, "expected": 7}
+    ]
+  },
+  {
+    "id": 38,
+    "title": "Course Schedule",
+    "frequency": 85,
+    "difficulty": "Medium",
+    "pattern": "Graph DFS/BFS",
+    "tags": ["graph", "dfs", "topological sort", "bfs"],
+    "companies": ["Amazon", "Google", "Facebook", "Uber", "Coursera"],
+    "function_name": "can_finish",
+    "signature": "def can_finish(num_courses: int, prerequisites: List[List[int]]) -> bool:",
+    "description": "There are numCourses courses (0 to numCourses-1). Some prerequisites exist: [a,b] means you must take b before a. Determine if you can finish all courses (i.e., no cycle).",
+    "key_insight": "Detect a cycle in a directed graph. Use DFS with three states: unvisited (0), visiting (1 = in current DFS path), visited (2 = fully processed). A cycle exists if you reach a 'visiting' node.",
+    "time_complexity": "O(V + E)",
+    "space_complexity": "O(V + E)",
+    "common_mistakes": [
+      "Using visited as a boolean set — can't distinguish 'currently exploring' from 'fully done'",
+      "Building the graph as edge list instead of adjacency list",
+      "Forgetting to check all nodes (not just one starting node)"
+    ],
+    "hints": [
+      "What does a cycle mean in terms of course completion?",
+      "Build adjacency list. DFS with 3 states: 0=unvisited, 1=in-path, 2=done. Cycle if you hit a node with state 1.",
+      "state = [0]*n. For each node: if dfs(node) returns False, return False."
+    ],
+    "examples": [
+      {"input": {"num_courses": 2, "prerequisites": [[1,0]]}, "output": true},
+      {"input": {"num_courses": 2, "prerequisites": [[1,0],[0,1]]}, "output": false}
+    ],
+    "test_cases": [
+      {"input": {"num_courses": 2, "prerequisites": [[1,0]]}, "expected": true},
+      {"input": {"num_courses": 2, "prerequisites": [[1,0],[0,1]]}, "expected": false},
+      {"input": {"num_courses": 1, "prerequisites": []}, "expected": true},
+      {"input": {"num_courses": 5, "prerequisites": [[1,4],[2,4],[3,1],[3,2]]}, "expected": true}
+    ]
+  },
+  {
+    "id": 39,
+    "title": "Pacific Atlantic Water Flow",
+    "frequency": 78,
+    "difficulty": "Medium",
+    "pattern": "Graph DFS/BFS",
+    "tags": ["array", "dfs", "bfs", "matrix"],
+    "companies": ["Google", "Amazon", "Facebook"],
+    "function_name": "pacific_atlantic",
+    "signature": "def pacific_atlantic(heights: List[List[int]]) -> List[List[int]]:",
+    "description": "Rain flows from a cell to adjacent cells with equal or lower height. Water can flow to the Pacific (top/left border) or Atlantic (bottom/right border). Return all cells from which water can reach both oceans.",
+    "key_insight": "Reverse the flow: DFS/BFS inward from each ocean's border (going uphill instead of downhill). Find cells reachable by both oceans — the intersection.",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(m * n)",
+    "common_mistakes": [
+      "Simulating actual flow from each cell — O(m²n²), too slow",
+      "Flowing in the wrong direction when doing reverse DFS (must go to cells with >= height)",
+      "Not seeding both oceans correctly (Pacific: top row + left col; Atlantic: bottom row + right col)"
+    ],
+    "hints": [
+      "Instead of flowing downhill from every cell, what if you flow uphill from the oceans?",
+      "BFS/DFS from Pacific border cells (top+left). Then from Atlantic border cells (bottom+right).",
+      "Return intersection of reachable cells. Move to neighbor if neighbor.height >= current.height."
+    ],
+    "examples": [
+      {"input": {"heights": [[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]]}, "output": [[0,4],[1,3],[1,4],[2,2],[3,0],[3,1],[4,0]]}
+    ],
+    "test_cases": [
+      {"input": {"heights": [[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]]}, "expected": [[0,4],[1,3],[1,4],[2,2],[3,0],[3,1],[4,0]]},
+      {"input": {"heights": [[1]]}, "expected": [[0,0]]},
+      {"input": {"heights": [[1,1],[1,1],[1,1]]}, "expected": [[0,0],[0,1],[1,0],[1,1],[2,0],[2,1]]}
+    ]
+  },
+  {
+    "id": 40,
+    "title": "Insert Interval",
+    "frequency": 82,
+    "difficulty": "Medium",
+    "pattern": "Intervals",
+    "tags": ["array", "intervals"],
+    "companies": ["Google", "Facebook", "LinkedIn", "Amazon"],
+    "function_name": "insert",
+    "signature": "def insert(intervals: List[List[int]], new_interval: List[int]) -> List[List[int]]:",
+    "description": "Given a list of non-overlapping sorted intervals and a new interval, insert and merge so the list remains sorted and non-overlapping.",
+    "key_insight": "Three phases: (1) add all intervals ending before new_interval starts, (2) merge all overlapping intervals into new_interval, (3) add the rest.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "common_mistakes": [
+      "Using < instead of <= when checking if intervals overlap (touching at a point means merge)",
+      "Forgetting the third phase (appending remaining intervals after the merged one)",
+      "Modifying new_interval in place vs. tracking merged start/end separately"
+    ],
+    "hints": [
+      "Walk through three zones: before new, overlapping with new, after new.",
+      "Phase 1: intervals[i][1] < new[0] → append as-is. Phase 2: intervals[i][0] <= new[1] → merge. Phase 3: append rest.",
+      "Merging: new[0] = min(new[0], curr[0]); new[1] = max(new[1], curr[1])."
+    ],
+    "examples": [
+      {"input": {"intervals": [[1,3],[6,9]], "new_interval": [2,5]}, "output": [[1,5],[6,9]]},
+      {"input": {"intervals": [[1,2],[3,5],[6,7],[8,10],[12,16]], "new_interval": [4,8]}, "output": [[1,2],[3,10],[12,16]]}
+    ],
+    "test_cases": [
+      {"input": {"intervals": [[1,3],[6,9]], "new_interval": [2,5]}, "expected": [[1,5],[6,9]]},
+      {"input": {"intervals": [[1,2],[3,5],[6,7],[8,10],[12,16]], "new_interval": [4,8]}, "expected": [[1,2],[3,10],[12,16]]},
+      {"input": {"intervals": [], "new_interval": [5,7]}, "expected": [[5,7]]},
+      {"input": {"intervals": [[1,5]], "new_interval": [2,3]}, "expected": [[1,5]]},
+      {"input": {"intervals": [[1,5]], "new_interval": [6,8]}, "expected": [[1,5],[6,8]]}
+    ]
+  },
+  {
+    "id": 41,
+    "title": "Non-overlapping Intervals",
+    "frequency": 78,
+    "difficulty": "Medium",
+    "pattern": "Intervals",
+    "tags": ["array", "intervals", "greedy", "sorting"],
+    "companies": ["Google", "Facebook", "Amazon"],
+    "function_name": "erase_overlap_intervals",
+    "signature": "def erase_overlap_intervals(intervals: List[List[int]]) -> int:",
+    "description": "Given an array of intervals, return the minimum number of intervals you need to remove to make the rest non-overlapping.",
+    "key_insight": "Greedy: sort by end time. Always keep the interval that ends earliest (leaves the most room). Count how many you must skip (overlap with the previous kept interval).",
+    "time_complexity": "O(n log n)",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Sorting by start instead of end time — the greedy choice depends on end time",
+      "Counting kept intervals instead of removed ones (answer = total - kept)",
+      "Confusing this with Merge Intervals — here you count removals, not produce merged list"
+    ],
+    "hints": [
+      "Which interval should you always keep when you have a choice?",
+      "Sort by end. Greedily keep intervals with the smallest end time. Count conflicts.",
+      "Track prev_end. If curr.start < prev_end: increment removals. Else: prev_end = curr.end."
+    ],
+    "examples": [
+      {"input": {"intervals": [[1,2],[2,3],[3,4],[1,3]]}, "output": 1},
+      {"input": {"intervals": [[1,2],[1,2],[1,2]]}, "output": 2}
+    ],
+    "test_cases": [
+      {"input": {"intervals": [[1,2],[2,3],[3,4],[1,3]]}, "expected": 1},
+      {"input": {"intervals": [[1,2],[1,2],[1,2]]}, "expected": 2},
+      {"input": {"intervals": [[1,2],[2,3]]}, "expected": 0},
+      {"input": {"intervals": [[0,2],[1,3],[2,4],[3,5],[4,6]]}, "expected": 2}
+    ]
+  },
+  {
+    "id": 42,
+    "title": "Longest Palindromic Substring",
+    "frequency": 83,
+    "difficulty": "Medium",
+    "pattern": "Expand Around Center",
+    "tags": ["string", "dynamic programming", "two pointers"],
+    "companies": ["Amazon", "Microsoft", "Google", "Facebook", "Bloomberg"],
+    "function_name": "longest_palindrome",
+    "signature": "def longest_palindrome(s: str) -> str:",
+    "description": "Given a string s, return the longest palindromic substring.",
+    "key_insight": "Expand around each center. For odd-length: center at i. For even-length: center between i and i+1. O(n) with Manacher's, O(n²) expand-around-center is the standard approach.",
+    "time_complexity": "O(n²)",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Forgetting to check both odd and even length palindromes",
+      "Using DP table (O(n²) space) when O(1) space is achievable",
+      "Returning a palindrome of wrong length when multiple maxima exist"
+    ],
+    "hints": [
+      "Every palindrome has a center. What are the possible centers?",
+      "For each index i: expand left/right for odd-length (center=i) and even-length (center=i,i+1).",
+      "Track the start and max length of the best palindrome found so far."
+    ],
+    "examples": [
+      {"input": {"s": "babad"}, "output": "bab"},
+      {"input": {"s": "cbbd"}, "output": "bb"}
+    ],
+    "test_cases": [
+      {"input": {"s": "babad"}, "expected": "bab"},
+      {"input": {"s": "cbbd"}, "expected": "bb"},
+      {"input": {"s": "a"}, "expected": "a"},
+      {"input": {"s": "racecar"}, "expected": "racecar"},
+      {"input": {"s": "aacabdkacaa"}, "expected": "aca"}
+    ]
+  },
+  {
+    "id": 43,
+    "title": "Kth Largest Element in an Array",
+    "frequency": 83,
+    "difficulty": "Medium",
+    "pattern": "Heap / Quickselect",
+    "tags": ["array", "heap", "sorting", "quickselect"],
+    "companies": ["Amazon", "Facebook", "Google", "Microsoft", "Apple"],
+    "function_name": "find_kth_largest",
+    "signature": "def find_kth_largest(nums: List[int], k: int) -> int:",
+    "description": "Given an integer array and an integer k, return the kth largest element in the array (not kth distinct).",
+    "key_insight": "Min-heap of size k: push every element, pop when size > k. The top of the heap is the kth largest. O(n log k). Quickselect achieves O(n) average.",
+    "time_complexity": "O(n log k) with heap, O(n) average with quickselect",
+    "space_complexity": "O(k) with heap",
+    "common_mistakes": [
+      "Sorting the full array: O(n log n) — heap is faster for large n, small k",
+      "Using a max-heap and popping k times: same complexity but more code",
+      "Not knowing heapq in Python is a min-heap (to simulate max-heap, negate values)"
+    ],
+    "hints": [
+      "How do you maintain only the k largest elements efficiently?",
+      "Min-heap of size k: push each element. If heap size > k: heappop(). heap[0] is the answer.",
+      "import heapq. heap=[]. For n in nums: heappush(heap,n); if len(heap)>k: heappop(heap). return heap[0]."
+    ],
+    "examples": [
+      {"input": {"nums": [3,2,1,5,6,4], "k": 2}, "output": 5},
+      {"input": {"nums": [3,2,3,1,2,4,5,5,6], "k": 4}, "output": 4}
+    ],
+    "test_cases": [
+      {"input": {"nums": [3,2,1,5,6,4], "k": 2}, "expected": 5},
+      {"input": {"nums": [3,2,3,1,2,4,5,5,6], "k": 4}, "expected": 4},
+      {"input": {"nums": [1], "k": 1}, "expected": 1},
+      {"input": {"nums": [2,1], "k": 2}, "expected": 1}
+    ]
+  },
+  {
+    "id": 44,
+    "title": "Number of 1 Bits",
+    "frequency": 80,
+    "difficulty": "Easy",
+    "pattern": "Bit Manipulation",
+    "tags": ["bit manipulation"],
+    "companies": ["Apple", "Microsoft", "Amazon", "Google"],
+    "function_name": "hamming_weight",
+    "signature": "def hamming_weight(n: int) -> int:",
+    "description": "Given an unsigned integer, return the number of '1' bits it has (also known as the Hamming weight).",
+    "key_insight": "n & (n-1) clears the lowest set bit. Count how many times you can do this until n=0.",
+    "time_complexity": "O(k) where k = number of set bits",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Using str(bin(n)).count('1') works but misses the bit trick",
+      "Not handling n=0 (should return 0)"
+    ],
+    "hints": [
+      "What does n & (n-1) do to the lowest set bit?",
+      "n & (n-1) clears the lowest set bit. Count how many times until n=0.",
+      "count = 0; while n: n &= n-1; count += 1; return count"
+    ],
+    "examples": [
+      {"input": {"n": 11}, "output": 3},
+      {"input": {"n": 128}, "output": 1}
+    ],
+    "test_cases": [
+      {"input": {"n": 11}, "expected": 3},
+      {"input": {"n": 128}, "expected": 1},
+      {"input": {"n": 0}, "expected": 0}
+    ]
+  },
+  {
+    "id": 45,
+    "title": "Counting Bits",
+    "frequency": 78,
+    "difficulty": "Easy",
+    "pattern": "Bit Manipulation",
+    "tags": ["bit manipulation", "dynamic programming"],
+    "companies": ["Amazon", "Google", "Microsoft"],
+    "function_name": "count_bits",
+    "signature": "def count_bits(n: int) -> List[int]:",
+    "description": "Given an integer n, return an array ans of length n+1 such that for each i (0 <= i <= n), ans[i] is the number of 1's in the binary representation of i.",
+    "key_insight": "dp[i] = dp[i>>1] + (i&1). The number of 1s in i equals the number of 1s in i//2 plus the last bit.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "common_mistakes": [
+      "Computing popcount naively for each number: O(n log n)",
+      "Not recognizing the dp recurrence from the right-shift relationship"
+    ],
+    "hints": [
+      "How does the bit count of i relate to the bit count of i//2?",
+      "dp[i] = dp[i >> 1] + (i & 1). Shifting right removes the last bit.",
+      "dp = [0]*(n+1); for i in range(1,n+1): dp[i] = dp[i>>1] + (i&1)"
+    ],
+    "examples": [
+      {"input": {"n": 2}, "output": [0,1,1]},
+      {"input": {"n": 5}, "output": [0,1,1,2,1,2]}
+    ],
+    "test_cases": [
+      {"input": {"n": 2}, "expected": [0,1,1]},
+      {"input": {"n": 5}, "expected": [0,1,1,2,1,2]}
+    ]
+  },
+  {
+    "id": 46,
+    "title": "Reverse Bits",
+    "frequency": 75,
+    "difficulty": "Easy",
+    "pattern": "Bit Manipulation",
+    "tags": ["bit manipulation", "divide and conquer"],
+    "companies": ["Apple", "Amazon", "Google"],
+    "function_name": "reverse_bits",
+    "signature": "def reverse_bits(n: int) -> int:",
+    "description": "Reverse the bits of a given 32-bit unsigned integer.",
+    "key_insight": "Shift result left, take LSB of n with n&1, shift n right. Do exactly 32 times.",
+    "time_complexity": "O(1) — exactly 32 iterations",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Doing fewer than 32 iterations (leading zeros matter for the result)",
+      "Forgetting to shift result left before OR-ing in the new bit"
+    ],
+    "hints": [
+      "How do you extract the last bit of n and place it at the front of result?",
+      "result = (result << 1) | (n & 1); n >>= 1. Repeat 32 times.",
+      "for _ in range(32): result = (result << 1) | (n & 1); n >>= 1"
+    ],
+    "examples": [
+      {"input": {"n": 43261596}, "output": 964176192},
+      {"input": {"n": 4294967293}, "output": 3221225471}
+    ],
+    "test_cases": [
+      {"input": {"n": 43261596}, "expected": 964176192},
+      {"input": {"n": 4294967293}, "expected": 3221225471}
+    ]
+  },
+  {
+    "id": 47,
+    "title": "Missing Number",
+    "frequency": 82,
+    "difficulty": "Easy",
+    "pattern": "Bit Manipulation",
+    "tags": ["array", "bit manipulation", "math"],
+    "companies": ["Amazon", "Microsoft", "Bloomberg", "Google"],
+    "function_name": "missing_number",
+    "signature": "def missing_number(nums: List[int]) -> int:",
+    "description": "Given an array nums containing n distinct numbers in the range [0, n], return the only number in the range that is missing from the array.",
+    "key_insight": "Expected sum = n*(n+1)//2. Missing = expected - actual sum. Or XOR all indices 0..n with all values.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Using a set and scanning 0..n: correct but O(n) space",
+      "Integer overflow concerns (not an issue in Python)"
+    ],
+    "hints": [
+      "What should the sum of 0..n be?",
+      "Gauss formula: n*(n+1)//2. Subtract actual sum to get missing number.",
+      "return n*(n+1)//2 - sum(nums)"
+    ],
+    "examples": [
+      {"input": {"nums": [3,0,1]}, "output": 2},
+      {"input": {"nums": [0]}, "output": 1}
+    ],
+    "test_cases": [
+      {"input": {"nums": [3,0,1]}, "expected": 2},
+      {"input": {"nums": [9,6,4,2,3,5,7,0,1]}, "expected": 8},
+      {"input": {"nums": [0]}, "expected": 1}
+    ]
+  },
+  {
+    "id": 48,
+    "title": "Sum of Two Integers",
+    "frequency": 76,
+    "difficulty": "Medium",
+    "pattern": "Bit Manipulation",
+    "tags": ["bit manipulation", "math"],
+    "companies": ["Facebook", "Amazon", "Google", "Microsoft"],
+    "function_name": "get_sum",
+    "signature": "def get_sum(a: int, b: int) -> int:",
+    "description": "Calculate the sum of two integers a and b without using the operators + or -. The challenge is bit manipulation; for testing we verify the correct integer result.",
+    "key_insight": "XOR gives sum without carry. AND<<1 gives the carry. Repeat until carry=0. In Python use mask=0xFFFFFFFF for 32-bit simulation and handle sign extension.",
+    "time_complexity": "O(1) — at most 32 iterations",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Infinite loop in Python due to arbitrary precision integers (must mask to 32 bits)",
+      "Not handling negative results after 32-bit simulation"
+    ],
+    "hints": [
+      "How do you add two bits without +? XOR for sum, AND for carry.",
+      "a ^ b = sum bits; (a & b) << 1 = carry. Repeat until carry = 0.",
+      "Mask to 0xFFFFFFFF each iteration. After loop, sign-extend if bit 31 is set."
+    ],
+    "examples": [
+      {"input": {"a": 1, "b": 2}, "output": 3},
+      {"input": {"a": -1, "b": 1}, "output": 0}
+    ],
+    "test_cases": [
+      {"input": {"a": 1, "b": 2}, "expected": 3},
+      {"input": {"a": -1, "b": 1}, "expected": 0},
+      {"input": {"a": -12, "b": 3}, "expected": -9}
+    ]
+  },
+  {
+    "id": 49,
+    "title": "Maximum Product Subarray",
+    "frequency": 85,
+    "difficulty": "Medium",
+    "pattern": "Dynamic Programming 1D",
+    "tags": ["array", "dynamic programming"],
+    "companies": ["Amazon", "LinkedIn", "Microsoft", "Google", "Facebook"],
+    "function_name": "max_product",
+    "signature": "def max_product(nums: List[int]) -> int:",
+    "description": "Given an integer array, find the contiguous subarray that has the largest product and return the product.",
+    "key_insight": "Track both max AND min running product (negative × negative = positive). At each step candidates are (n, max_p*n, min_p*n). Reset on zeros.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Only tracking max product (misses negative × negative = positive)",
+      "Not handling zeros correctly — zeros reset the subarray",
+      "Initializing result to 0 instead of nums[0]"
+    ],
+    "hints": [
+      "Why does tracking only the max running product fail with negatives?",
+      "Track both max_prod and min_prod. A negative min can become the new max when multiplied by a negative.",
+      "cur_max, cur_min = n, n at each step. Use temp var: new_max = max(n, cur_max*n, cur_min*n)."
+    ],
+    "examples": [
+      {"input": {"nums": [2,3,-2,4]}, "output": 6},
+      {"input": {"nums": [-2,0,-1]}, "output": 0}
+    ],
+    "test_cases": [
+      {"input": {"nums": [2,3,-2,4]}, "expected": 6},
+      {"input": {"nums": [-2,0,-1]}, "expected": 0},
+      {"input": {"nums": [-2,-3,-4]}, "expected": 12},
+      {"input": {"nums": [2,-3,-2,-4]}, "expected": 96}
+    ]
+  },
+  {
+    "id": 50,
+    "title": "House Robber II",
+    "frequency": 82,
+    "difficulty": "Medium",
+    "pattern": "Dynamic Programming 1D",
+    "tags": ["array", "dynamic programming"],
+    "companies": ["Amazon", "Google", "Microsoft", "Airbnb"],
+    "function_name": "rob",
+    "signature": "def rob(nums: List[int]) -> int:",
+    "description": "Houses are arranged in a circle. You cannot rob two adjacent houses and cannot rob both the first and last house. Return the maximum amount you can rob.",
+    "key_insight": "Circle constraint: cannot rob both first and last. Run House Robber I on nums[0..n-2] and nums[1..n-1], take the max. Handle n=1 edge case separately.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Forgetting n=1 edge case (just return nums[0])",
+      "Applying House Robber I directly on the full circular array"
+    ],
+    "hints": [
+      "How do you handle the constraint that first and last houses are adjacent?",
+      "Split into two subproblems: rob houses 0..n-2, or rob houses 1..n-1. Take the max.",
+      "def rob_line(arr): prev2,prev1=0,0; for n in arr: prev2,prev1=prev1,max(prev1,prev2+n); return prev1"
+    ],
+    "examples": [
+      {"input": {"nums": [2,3,2]}, "output": 3},
+      {"input": {"nums": [1,2,3,1]}, "output": 4}
+    ],
+    "test_cases": [
+      {"input": {"nums": [2,3,2]}, "expected": 3},
+      {"input": {"nums": [1,2,3,1]}, "expected": 4},
+      {"input": {"nums": [1,2,3]}, "expected": 3}
+    ]
+  },
+  {
+    "id": 51,
+    "title": "Decode Ways",
+    "frequency": 81,
+    "difficulty": "Medium",
+    "pattern": "Dynamic Programming 1D",
+    "tags": ["string", "dynamic programming"],
+    "companies": ["Facebook", "Amazon", "Google", "Microsoft"],
+    "function_name": "num_decodings",
+    "signature": "def num_decodings(s: str) -> int:",
+    "description": "A message containing letters A-Z can be encoded as '1'-'26'. Given a string of digits, return the number of ways to decode it.",
+    "key_insight": "dp[i] += dp[i-1] if s[i-1] != '0'; dp[i] += dp[i-2] if 10 <= int(s[i-2:i]) <= 26.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n), O(1) with two variables",
+    "common_mistakes": [
+      "Not handling leading zeros ('06' → 0 ways)",
+      "Two-digit check must be 10-26 (not 01-09 which are invalid encodings)",
+      "Off-by-one in the string slicing"
+    ],
+    "hints": [
+      "What makes a single-digit or two-digit decode valid?",
+      "Single digit valid if s[i-1] != '0'. Two digits valid if 10 <= int(s[i-2:i]) <= 26.",
+      "dp[0]=1, dp[1]=0 if s[0]=='0' else 1. For i in 2..n+1: apply both conditions."
+    ],
+    "examples": [
+      {"input": {"s": "12"}, "output": 2},
+      {"input": {"s": "226"}, "output": 3}
+    ],
+    "test_cases": [
+      {"input": {"s": "12"}, "expected": 2},
+      {"input": {"s": "226"}, "expected": 3},
+      {"input": {"s": "06"}, "expected": 0},
+      {"input": {"s": "10"}, "expected": 1},
+      {"input": {"s": "2101"}, "expected": 1}
+    ]
+  },
+  {
+    "id": 52,
+    "title": "Jump Game",
+    "frequency": 84,
+    "difficulty": "Medium",
+    "pattern": "Greedy / Kadane's",
+    "tags": ["array", "greedy", "dynamic programming"],
+    "companies": ["Amazon", "Google", "Facebook", "Microsoft"],
+    "function_name": "can_jump",
+    "signature": "def can_jump(nums: List[int]) -> bool:",
+    "description": "Given an array where nums[i] is the maximum jump length from position i, return true if you can reach the last index starting from index 0.",
+    "key_insight": "Track max_reach greedily. If index > max_reach at any point, return False. Update max_reach = max(max_reach, i + nums[i]).",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Checking if nums[i]==0 as the failure condition (wrong — you can jump over zeros)",
+      "Not realizing greedy works: just track the furthest reachable index"
+    ],
+    "hints": [
+      "What's the furthest index you can reach from positions 0..i?",
+      "Track max_reach. At each index, if i > max_reach you're stuck. Update max_reach = max(max_reach, i+nums[i]).",
+      "for i,n in enumerate(nums): if i>max_reach: return False; max_reach=max(max_reach,i+n)"
+    ],
+    "examples": [
+      {"input": {"nums": [2,3,1,1,4]}, "output": true},
+      {"input": {"nums": [3,2,1,0,4]}, "output": false}
+    ],
+    "test_cases": [
+      {"input": {"nums": [2,3,1,1,4]}, "expected": true},
+      {"input": {"nums": [3,2,1,0,4]}, "expected": false},
+      {"input": {"nums": [0]}, "expected": true},
+      {"input": {"nums": [1,0,0]}, "expected": false}
+    ]
+  },
+  {
+    "id": 53,
+    "title": "Combination Sum IV",
+    "frequency": 78,
+    "difficulty": "Medium",
+    "pattern": "Dynamic Programming 1D",
+    "tags": ["array", "dynamic programming"],
+    "companies": ["Google", "Facebook", "Amazon"],
+    "function_name": "combination_sum4",
+    "signature": "def combination_sum4(nums: List[int], target: int) -> int:",
+    "description": "Given an array of distinct integers and a target, return the number of possible ordered combinations that add up to target. Order matters (different sequences count as different).",
+    "key_insight": "Unlike Combination Sum (unique combos), this counts ordered sequences. dp[t] += dp[t-n] for each n in nums. This is an unbounded knapsack variant where order matters.",
+    "time_complexity": "O(target * n)",
+    "space_complexity": "O(target)",
+    "common_mistakes": [
+      "Confusing with Combination Sum (this is order-matters, those are unique sets)",
+      "Iterating nums in outer loop (gives combinations not permutations — swap loop order)"
+    ],
+    "hints": [
+      "How does 'order matters' change the DP loop structure vs coin change?",
+      "Outer loop over targets, inner loop over nums. dp[t] += dp[t-n] for each valid n.",
+      "dp[0]=1. for t in range(1,target+1): for n in nums: if t>=n: dp[t]+=dp[t-n]"
+    ],
+    "examples": [
+      {"input": {"nums": [1,2,3], "target": 4}, "output": 7},
+      {"input": {"nums": [9], "target": 3}, "output": 0}
+    ],
+    "test_cases": [
+      {"input": {"nums": [1,2,3], "target": 4}, "expected": 7},
+      {"input": {"nums": [9], "target": 3}, "expected": 0},
+      {"input": {"nums": [1,2,3], "target": 0}, "expected": 1}
+    ]
+  },
+  {
+    "id": 54,
+    "title": "Graph Valid Tree",
+    "frequency": 79,
+    "difficulty": "Medium",
+    "pattern": "Graph DFS/BFS",
+    "tags": ["graph", "dfs", "bfs", "union find"],
+    "companies": ["Google", "LinkedIn", "Facebook", "Amazon"],
+    "function_name": "valid_tree",
+    "signature": "def valid_tree(n: int, edges: List[List[int]]) -> bool:",
+    "description": "Given n nodes (labeled 0 to n-1) and a list of undirected edges, return true if these edges form a valid tree.",
+    "key_insight": "A valid tree has exactly n-1 edges and is fully connected. Check both conditions. Union-Find or DFS can detect cycles and connectivity.",
+    "time_complexity": "O(V + E)",
+    "space_complexity": "O(V + E)",
+    "common_mistakes": [
+      "Only checking connectivity (misses cycle with wrong edge count)",
+      "Only checking edge count (misses disconnected graph)",
+      "Not handling n=1 with empty edges (valid tree)"
+    ],
+    "hints": [
+      "What two properties must a tree satisfy?",
+      "Exactly n-1 edges AND fully connected (no cycles, no disconnected components).",
+      "Check len(edges)==n-1 first. Then DFS/BFS to verify all n nodes are reachable."
+    ],
+    "examples": [
+      {"input": {"n": 5, "edges": [[0,1],[0,2],[0,3],[1,4]]}, "output": true},
+      {"input": {"n": 5, "edges": [[0,1],[1,2],[2,3],[1,3],[1,4]]}, "output": false}
+    ],
+    "test_cases": [
+      {"input": {"n": 5, "edges": [[0,1],[0,2],[0,3],[1,4]]}, "expected": true},
+      {"input": {"n": 5, "edges": [[0,1],[1,2],[2,3],[1,3],[1,4]]}, "expected": false},
+      {"input": {"n": 1, "edges": []}, "expected": true}
+    ]
+  },
+  {
+    "id": 55,
+    "title": "Number of Connected Components in an Undirected Graph",
+    "frequency": 78,
+    "difficulty": "Medium",
+    "pattern": "Graph DFS/BFS",
+    "tags": ["graph", "dfs", "bfs", "union find"],
+    "companies": ["LinkedIn", "Google", "Facebook", "Amazon"],
+    "function_name": "count_components",
+    "signature": "def count_components(n: int, edges: List[List[int]]) -> int:",
+    "description": "Given n nodes (0 to n-1) and a list of undirected edges, return the number of connected components.",
+    "key_insight": "Union-Find: for each edge, union the nodes. Count remaining distinct roots. Or DFS: count how many times you start a new traversal on an unvisited node.",
+    "time_complexity": "O(V + E)",
+    "space_complexity": "O(V + E)",
+    "common_mistakes": [
+      "Not handling isolated nodes (nodes with no edges are their own components)",
+      "Using BFS without marking visited (infinite loop)"
+    ],
+    "hints": [
+      "How many times do you need to 'start' a traversal to visit all nodes?",
+      "Build adjacency list. DFS from each unvisited node, count starts.",
+      "Or Union-Find: parent=[i for i in range(n)]. Union each edge. Count unique roots."
+    ],
+    "examples": [
+      {"input": {"n": 5, "edges": [[0,1],[1,2],[3,4]]}, "output": 2},
+      {"input": {"n": 5, "edges": [[0,1],[1,2],[2,3],[3,4]]}, "output": 1}
+    ],
+    "test_cases": [
+      {"input": {"n": 5, "edges": [[0,1],[1,2],[3,4]]}, "expected": 2},
+      {"input": {"n": 5, "edges": [[0,1],[1,2],[2,3],[3,4]]}, "expected": 1},
+      {"input": {"n": 3, "edges": []}, "expected": 3}
+    ]
+  },
+  {
+    "id": 56,
+    "title": "Meeting Rooms",
+    "frequency": 80,
+    "difficulty": "Easy",
+    "pattern": "Intervals",
+    "tags": ["array", "intervals", "sorting"],
+    "companies": ["Facebook", "Amazon", "Google", "Bloomberg"],
+    "function_name": "can_attend_meetings",
+    "signature": "def can_attend_meetings(intervals: List[List[int]]) -> bool:",
+    "description": "Given an array of meeting time intervals [start, end], determine if a person could attend all meetings (no overlaps).",
+    "key_insight": "Sort by start time. If any meeting starts before the previous ends, return False. Meetings touching at endpoints are fine.",
+    "time_complexity": "O(n log n)",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Using <= instead of < (meetings that touch at endpoints are fine: [0,5],[5,10] is OK)",
+      "Forgetting to sort before comparing"
+    ],
+    "hints": [
+      "What order makes it easy to detect overlapping meetings?",
+      "Sort by start. If intervals[i][0] < intervals[i-1][1], there's an overlap.",
+      "Sort. for i in range(1,len(intervals)): if intervals[i][0] < intervals[i-1][1]: return False"
+    ],
+    "examples": [
+      {"input": {"intervals": [[0,30],[5,10],[15,20]]}, "output": false},
+      {"input": {"intervals": [[7,10],[2,4]]}, "output": true}
+    ],
+    "test_cases": [
+      {"input": {"intervals": [[0,30],[5,10],[15,20]]}, "expected": false},
+      {"input": {"intervals": [[7,10],[2,4]]}, "expected": true},
+      {"input": {"intervals": []}, "expected": true}
+    ]
+  },
+  {
+    "id": 57,
+    "title": "Meeting Rooms II",
+    "frequency": 82,
+    "difficulty": "Medium",
+    "pattern": "Intervals",
+    "tags": ["array", "intervals", "heap", "sorting"],
+    "companies": ["Facebook", "Amazon", "Google", "Bloomberg", "Uber"],
+    "function_name": "min_meeting_rooms",
+    "signature": "def min_meeting_rooms(intervals: List[List[int]]) -> int:",
+    "description": "Given an array of meeting time intervals, return the minimum number of conference rooms required.",
+    "key_insight": "Use a min-heap of end times. Sort by start. For each meeting: if heap top (earliest end) <= start, reuse that room (heapreplace). Else add a new room (heappush).",
+    "time_complexity": "O(n log n)",
+    "space_complexity": "O(n)",
+    "common_mistakes": [
+      "Not sorting by start time first",
+      "Using max-heap instead of min-heap (need earliest ending room)"
+    ],
+    "hints": [
+      "How do you know if an existing room is free for the next meeting?",
+      "Min-heap of end times. If heap[0] <= meeting.start, that room is free — update its end time.",
+      "Sort by start. heap=[]. For each s,e: if heap and heap[0]<=s: heapreplace(heap,e) else heappush(heap,e)"
+    ],
+    "examples": [
+      {"input": {"intervals": [[0,30],[5,10],[15,20]]}, "output": 2},
+      {"input": {"intervals": [[7,10],[2,4]]}, "output": 1}
+    ],
+    "test_cases": [
+      {"input": {"intervals": [[0,30],[5,10],[15,20]]}, "expected": 2},
+      {"input": {"intervals": [[7,10],[2,4]]}, "expected": 1},
+      {"input": {"intervals": [[1,5],[2,6],[8,9],[3,10]]}, "expected": 3}
+    ]
+  },
+  {
+    "id": 58,
+    "title": "Reverse Linked List",
+    "frequency": 91,
+    "difficulty": "Easy",
+    "pattern": "Linked List",
+    "tags": ["linked list", "recursion"],
+    "companies": ["Amazon", "Microsoft", "Facebook", "Google", "Apple"],
+    "function_name": "reverse_list",
+    "signature": "def reverse_list(head: Optional[ListNode]) -> Optional[ListNode]:",
+    "description": "Given the head of a singly linked list, reverse the list, and return the reversed list.",
+    "key_insight": "Three pointers: prev=None, curr=head. At each step: save next=curr.next, point curr.next=prev, advance prev=curr, curr=next.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Losing the next pointer before reassigning curr.next",
+      "Forgetting to set head.next=None (handled automatically by the loop)"
+    ],
+    "hints": [
+      "How do you redirect a node's pointer without losing the rest of the list?",
+      "Save next before reassigning: nxt=curr.next; curr.next=prev; prev=curr; curr=nxt.",
+      "prev,curr=None,head. while curr: nxt=curr.next;curr.next=prev;prev=curr;curr=nxt. return prev"
+    ],
+    "examples": [
+      {"input": {"head": [1,2,3,4,5]}, "output": [5,4,3,2,1]},
+      {"input": {"head": [1,2]}, "output": [2,1]}
+    ],
+    "test_cases": [
+      {"input": {"head": [1,2,3,4,5]}, "expected": [5,4,3,2,1], "input_converters": {"head": "list_to_linked"}, "output_converter": "linked_to_list"},
+      {"input": {"head": [1,2]}, "expected": [2,1], "input_converters": {"head": "list_to_linked"}, "output_converter": "linked_to_list"},
+      {"input": {"head": []}, "expected": [], "input_converters": {"head": "list_to_linked"}, "output_converter": "linked_to_list"}
+    ]
+  },
+  {
+    "id": 59,
+    "title": "Linked List Cycle",
+    "frequency": 88,
+    "difficulty": "Easy",
+    "pattern": "Linked List",
+    "tags": ["linked list", "two pointers", "hash map"],
+    "companies": ["Amazon", "Microsoft", "Google", "Facebook", "Apple"],
+    "function_name": "has_cycle",
+    "signature": "def has_cycle(head: Optional[ListNode]) -> bool:",
+    "description": "Given the head of a linked list, determine if the linked list has a cycle. A cycle exists if some node's next pointer points to a previous node.",
+    "key_insight": "Floyd's tortoise and hare: slow moves 1 step, fast moves 2. They meet if and only if there's a cycle.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Not checking if fast or fast.next is None before advancing fast",
+      "Using a hash set (correct but O(n) space — Floyd's is O(1))"
+    ],
+    "hints": [
+      "What happens if two pointers move at different speeds in a cycle?",
+      "Slow=1 step, fast=2 steps. If they ever meet, there's a cycle. If fast reaches None, no cycle.",
+      "slow,fast=head,head. while fast and fast.next: slow=slow.next;fast=fast.next.next;if slow==fast:return True"
+    ],
+    "examples": [
+      {"input": {"head": [[3,2,0,-4], 1]}, "output": true},
+      {"input": {"head": [[1,2], -1]}, "output": false}
+    ],
+    "test_cases": [
+      {"input": {"head": [[3,2,0,-4], 1]}, "expected": true, "input_converters": {"head": "cyclic_list_to_linked"}},
+      {"input": {"head": [[1,2], -1]}, "expected": false, "input_converters": {"head": "cyclic_list_to_linked"}},
+      {"input": {"head": [[1], -1]}, "expected": false, "input_converters": {"head": "cyclic_list_to_linked"}}
+    ]
+  },
+  {
+    "id": 60,
+    "title": "Merge Two Sorted Lists",
+    "frequency": 90,
+    "difficulty": "Easy",
+    "pattern": "Linked List",
+    "tags": ["linked list", "recursion"],
+    "companies": ["Amazon", "Microsoft", "Google", "Facebook", "Apple"],
+    "function_name": "merge_two_lists",
+    "signature": "def merge_two_lists(list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:",
+    "description": "Given the heads of two sorted linked lists, merge them into one sorted list and return the head.",
+    "key_insight": "Dummy head node simplifies edge cases. Compare heads, attach smaller, advance that pointer. After one list is exhausted, attach the remainder of the other.",
+    "time_complexity": "O(m + n)",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Forgetting to attach the remaining non-empty list at the end",
+      "Not using a dummy head (makes the first node a special case)"
+    ],
+    "hints": [
+      "How do you avoid special-casing the very first node?",
+      "Use a dummy head. Compare list1.val vs list2.val, attach the smaller, advance that pointer.",
+      "dummy=ListNode(0); cur=dummy. while list1 and list2: attach smaller. Then cur.next=list1 or list2."
+    ],
+    "examples": [
+      {"input": {"list1": [1,2,4], "list2": [1,3,4]}, "output": [1,1,2,3,4,4]},
+      {"input": {"list1": [], "list2": []}, "output": []}
+    ],
+    "test_cases": [
+      {"input": {"list1": [1,2,4], "list2": [1,3,4]}, "expected": [1,1,2,3,4,4], "input_converters": {"list1": "list_to_linked", "list2": "list_to_linked"}, "output_converter": "linked_to_list"},
+      {"input": {"list1": [], "list2": []}, "expected": [], "input_converters": {"list1": "list_to_linked", "list2": "list_to_linked"}, "output_converter": "linked_to_list"},
+      {"input": {"list1": [], "list2": [0]}, "expected": [0], "input_converters": {"list1": "list_to_linked", "list2": "list_to_linked"}, "output_converter": "linked_to_list"}
+    ]
+  },
+  {
+    "id": 61,
+    "title": "Merge K Sorted Lists",
+    "frequency": 85,
+    "difficulty": "Hard",
+    "pattern": "Heap",
+    "tags": ["linked list", "heap", "divide and conquer"],
+    "companies": ["Amazon", "Google", "Facebook", "Microsoft", "Uber"],
+    "function_name": "merge_k_lists",
+    "signature": "def merge_k_lists(lists: List[Optional[ListNode]]) -> Optional[ListNode]:",
+    "description": "Given an array of k sorted linked lists, merge them all into one sorted linked list and return it.",
+    "key_insight": "Min-heap of (val, list_index, node). list_index breaks ties so ListNode comparison is never needed. Pop minimum, push next from same list.",
+    "time_complexity": "O(n log k) where n = total nodes",
+    "space_complexity": "O(k)",
+    "common_mistakes": [
+      "Comparing ListNode objects in heap (add tiebreaker index to avoid TypeError)",
+      "Not handling empty lists in the input array",
+      "Using divide-and-conquer merging incorrectly"
+    ],
+    "hints": [
+      "How do you always pick the smallest node across k lists efficiently?",
+      "Min-heap of (val, idx, node). Pop min, attach to result, push node.next if exists.",
+      "Seed heap with head of each non-None list. Use idx to break ties (avoid comparing ListNodes)."
+    ],
+    "examples": [
+      {"input": {"lists": [[1,4,5],[1,3,4],[2,6]]}, "output": [1,1,2,3,4,4,5,6]},
+      {"input": {"lists": []}, "output": []}
+    ],
+    "test_cases": [
+      {"input": {"lists": [[1,4,5],[1,3,4],[2,6]]}, "expected": [1,1,2,3,4,4,5,6], "input_converters": {"lists": "lists_to_linked_array"}, "output_converter": "linked_to_list"},
+      {"input": {"lists": [[]]}, "expected": [], "input_converters": {"lists": "lists_to_linked_array"}, "output_converter": "linked_to_list"},
+      {"input": {"lists": []}, "expected": [], "input_converters": {"lists": "lists_to_linked_array"}, "output_converter": "linked_to_list"}
+    ]
+  },
+  {
+    "id": 62,
+    "title": "Remove Nth Node From End of List",
+    "frequency": 84,
+    "difficulty": "Medium",
+    "pattern": "Linked List",
+    "tags": ["linked list", "two pointers"],
+    "companies": ["Amazon", "Microsoft", "Google", "Facebook"],
+    "function_name": "remove_nth_from_end",
+    "signature": "def remove_nth_from_end(head: Optional[ListNode], n: int) -> Optional[ListNode]:",
+    "description": "Given the head of a linked list, remove the nth node from the end of the list and return its head.",
+    "key_insight": "Two pointers: advance right n steps, then move both until right is None. Left.next is the node to remove. Dummy head handles removing the first node.",
+    "time_complexity": "O(L) where L = list length",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Not using a dummy head (fails when removing the first node)",
+      "Off-by-one in advancing the right pointer"
+    ],
+    "hints": [
+      "How do you find the nth node from the end in one pass?",
+      "Two pointers with n-step gap. When right reaches end, left is at the node before the target.",
+      "dummy=ListNode(0,head); left=dummy,right=head. Advance right n times. Then move both. left.next=left.next.next."
+    ],
+    "examples": [
+      {"input": {"head": [1,2,3,4,5], "n": 2}, "output": [1,2,3,5]},
+      {"input": {"head": [1], "n": 1}, "output": []}
+    ],
+    "test_cases": [
+      {"input": {"head": [1,2,3,4,5], "n": 2}, "expected": [1,2,3,5], "input_converters": {"head": "list_to_linked"}, "output_converter": "linked_to_list"},
+      {"input": {"head": [1], "n": 1}, "expected": [], "input_converters": {"head": "list_to_linked"}, "output_converter": "linked_to_list"},
+      {"input": {"head": [1,2], "n": 1}, "expected": [1], "input_converters": {"head": "list_to_linked"}, "output_converter": "linked_to_list"}
+    ]
+  },
+  {
+    "id": 63,
+    "title": "Reorder List",
+    "frequency": 80,
+    "difficulty": "Medium",
+    "pattern": "Linked List",
+    "tags": ["linked list", "two pointers", "stack"],
+    "companies": ["Amazon", "Google", "Facebook", "Microsoft"],
+    "function_name": "reorder_list",
+    "signature": "def reorder_list(head: Optional[ListNode]) -> Optional[ListNode]:",
+    "description": "Given the head of a singly linked list L0→L1→…→Ln, reorder it to L0→Ln→L1→Ln-1→L2→… and return head. Do it in-place.",
+    "key_insight": "Three steps: (1) find middle with slow/fast pointers, (2) reverse second half, (3) merge the two halves alternately. Sever the connection between halves before reversing.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Not severing the connection between first and second halves before reversing",
+      "Off-by-one in finding the middle (slow/fast pointer end condition)"
+    ],
+    "hints": [
+      "What three sub-problems combine to solve this?",
+      "Find middle (slow/fast). Reverse second half. Merge first half and reversed second half.",
+      "After finding mid: second=mid.next; mid.next=None. Reverse second. Interleave first and second."
+    ],
+    "examples": [
+      {"input": {"head": [1,2,3,4]}, "output": [1,4,2,3]},
+      {"input": {"head": [1,2,3,4,5]}, "output": [1,5,2,4,3]}
+    ],
+    "test_cases": [
+      {"input": {"head": [1,2,3,4]}, "expected": [1,4,2,3], "input_converters": {"head": "list_to_linked"}, "output_converter": "linked_to_list"},
+      {"input": {"head": [1,2,3,4,5]}, "expected": [1,5,2,4,3], "input_converters": {"head": "list_to_linked"}, "output_converter": "linked_to_list"},
+      {"input": {"head": [1]}, "expected": [1], "input_converters": {"head": "list_to_linked"}, "output_converter": "linked_to_list"},
+      {"input": {"head": [1,2]}, "expected": [1,2], "input_converters": {"head": "list_to_linked"}, "output_converter": "linked_to_list"}
+    ]
+  },
+  {
+    "id": 64,
+    "title": "Set Matrix Zeroes",
+    "frequency": 80,
+    "difficulty": "Medium",
+    "pattern": "Array / Prefix Product",
+    "tags": ["array", "matrix", "hash map"],
+    "companies": ["Amazon", "Microsoft", "Facebook", "Apple"],
+    "function_name": "set_zeroes",
+    "signature": "def set_zeroes(matrix: List[List[int]]) -> List[List[int]]:",
+    "description": "Given an m×n integer matrix, if an element is 0, set its entire row and column to 0. Do it in-place and return the matrix.",
+    "key_insight": "O(1) space: use first row and first column as markers. First check if row 0 or col 0 themselves have zeros. Then use markers to zero out interior rows/cols.",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Mutating matrix while scanning (zeroes spread incorrectly — mark first, then apply)",
+      "Using O(m+n) extra sets instead of the first row/column as markers"
+    ],
+    "hints": [
+      "How do you record which rows and columns need zeroing without extra space?",
+      "Use first row and col as flags. Scan interior, mark matrix[0][j] and matrix[i][0] for zeros.",
+      "Then zero out rows/cols based on flags. Handle first row/col separately."
+    ],
+    "examples": [
+      {"input": {"matrix": [[1,1,1],[1,0,1],[1,1,1]]}, "output": [[1,0,1],[0,0,0],[1,0,1]]},
+      {"input": {"matrix": [[0,1,2,0],[3,4,5,2],[1,3,1,5]]}, "output": [[0,0,0,0],[0,4,5,0],[0,3,1,0]]}
+    ],
+    "test_cases": [
+      {"input": {"matrix": [[1,1,1],[1,0,1],[1,1,1]]}, "expected": [[1,0,1],[0,0,0],[1,0,1]]},
+      {"input": {"matrix": [[0,1,2,0],[3,4,5,2],[1,3,1,5]]}, "expected": [[0,0,0,0],[0,4,5,0],[0,3,1,0]]}
+    ]
+  },
+  {
+    "id": 65,
+    "title": "Spiral Matrix",
+    "frequency": 81,
+    "difficulty": "Medium",
+    "pattern": "Array / Prefix Product",
+    "tags": ["array", "matrix", "simulation"],
+    "companies": ["Amazon", "Microsoft", "Google", "Facebook", "Apple"],
+    "function_name": "spiral_order",
+    "signature": "def spiral_order(matrix: List[List[int]]) -> List[int]:",
+    "description": "Given an m×n matrix, return all elements of the matrix in spiral order.",
+    "key_insight": "Maintain four boundaries (top, bottom, left, right). Traverse right, down, left, up; shrink boundaries after each direction. Check boundaries before left/up traversals.",
+    "time_complexity": "O(m * n)",
+    "space_complexity": "O(1) excluding output",
+    "common_mistakes": [
+      "Not checking if top<=bottom and left<=right before traversing left/up (double-counts in non-square matrices)",
+      "Boundary update order: shrink after each direction"
+    ],
+    "hints": [
+      "How do you avoid re-visiting cells with shrinking boundaries?",
+      "top,bottom,left,right=0,m-1,0,n-1. Traverse R→D→L→U, shrink bounds each time.",
+      "After going right: top+=1. After down: right-=1. After left: bottom-=1. After up: left+=1."
+    ],
+    "examples": [
+      {"input": {"matrix": [[1,2,3],[4,5,6],[7,8,9]]}, "output": [1,2,3,6,9,8,7,4,5]},
+      {"input": {"matrix": [[1,2,3,4],[5,6,7,8],[9,10,11,12]]}, "output": [1,2,3,4,8,12,11,10,9,5,6,7]}
+    ],
+    "test_cases": [
+      {"input": {"matrix": [[1,2,3],[4,5,6],[7,8,9]]}, "expected": [1,2,3,6,9,8,7,4,5]},
+      {"input": {"matrix": [[1,2,3,4],[5,6,7,8],[9,10,11,12]]}, "expected": [1,2,3,4,8,12,11,10,9,5,6,7]},
+      {"input": {"matrix": [[1]]}, "expected": [1]}
+    ]
+  },
+  {
+    "id": 66,
+    "title": "Rotate Image",
+    "frequency": 82,
+    "difficulty": "Medium",
+    "pattern": "Array / Prefix Product",
+    "tags": ["array", "matrix", "math"],
+    "companies": ["Amazon", "Microsoft", "Google", "Facebook", "Apple"],
+    "function_name": "rotate",
+    "signature": "def rotate(matrix: List[List[int]]) -> List[List[int]]:",
+    "description": "Given an n×n 2D matrix representing an image, rotate the image by 90 degrees (clockwise) in-place. Return the modified matrix.",
+    "key_insight": "Transpose (swap matrix[i][j] and matrix[j][i] for j>i) then reverse each row. Two simple passes achieve the rotation.",
+    "time_complexity": "O(n²)",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Transposing incorrectly (only swap for j > i to avoid double-swapping)",
+      "Reversing columns instead of rows after transpose"
+    ],
+    "hints": [
+      "What two simple operations combine to achieve a 90° clockwise rotation?",
+      "Step 1: Transpose — swap matrix[i][j] with matrix[j][i]. Step 2: Reverse each row.",
+      "for i in range(n): for j in range(i+1,n): matrix[i][j],matrix[j][i]=matrix[j][i],matrix[i][j]. Then reverse rows."
+    ],
+    "examples": [
+      {"input": {"matrix": [[1,2,3],[4,5,6],[7,8,9]]}, "output": [[7,4,1],[8,5,2],[9,6,3]]},
+      {"input": {"matrix": [[5,1,9,11],[2,4,8,10],[13,3,6,7],[15,14,12,16]]}, "output": [[15,13,2,5],[14,3,4,1],[12,6,8,9],[16,7,10,11]]}
+    ],
+    "test_cases": [
+      {"input": {"matrix": [[1,2,3],[4,5,6],[7,8,9]]}, "expected": [[7,4,1],[8,5,2],[9,6,3]]},
+      {"input": {"matrix": [[5,1,9,11],[2,4,8,10],[13,3,6,7],[15,14,12,16]]}, "expected": [[15,13,2,5],[14,3,4,1],[12,6,8,9],[16,7,10,11]]}
+    ]
+  },
+  {
+    "id": 67,
+    "title": "Palindromic Substrings",
+    "frequency": 80,
+    "difficulty": "Medium",
+    "pattern": "Expand Around Center",
+    "tags": ["string", "dynamic programming", "two pointers"],
+    "companies": ["Amazon", "Facebook", "Google", "Microsoft"],
+    "function_name": "count_substrings",
+    "signature": "def count_substrings(s: str) -> int:",
+    "description": "Given a string s, return the number of palindromic substrings in it. A substring is a contiguous sequence of characters.",
+    "key_insight": "For each center (n centers for odd-length, n-1 for even-length), expand outward while characters match. Count each valid palindrome found.",
+    "time_complexity": "O(n²)",
+    "space_complexity": "O(1)",
+    "common_mistakes": [
+      "Forgetting to check both odd and even length palindromes",
+      "Off-by-one in the expansion boundary"
+    ],
+    "hints": [
+      "How many possible centers are there for palindromes in a string of length n?",
+      "2n-1 centers: each character (odd) and each gap between characters (even). Expand from each.",
+      "def expand(l,r): count=0; while l>=0 and r<n and s[l]==s[r]: count+=1;l-=1;r+=1; return count"
+    ],
+    "examples": [
+      {"input": {"s": "abc"}, "output": 3},
+      {"input": {"s": "aaa"}, "output": 6}
+    ],
+    "test_cases": [
+      {"input": {"s": "abc"}, "expected": 3},
+      {"input": {"s": "aaa"}, "expected": 6},
+      {"input": {"s": "a"}, "expected": 1},
+      {"input": {"s": "abcba"}, "expected": 7}
+    ]
+  },
+  {
+    "id": 68,
+    "title": "Maximum Depth of Binary Tree",
+    "frequency": 88,
+    "difficulty": "Easy",
+    "pattern": "Tree DFS/BFS",
+    "tags": ["tree", "dfs", "bfs", "recursion"],
+    "companies": ["Amazon", "LinkedIn", "Google", "Facebook", "Microsoft"],
+    "function_name": "max_depth",
+    "signature": "def max_depth(root: Optional[TreeNode]) -> int:",
+    "description": "Given the root of a binary tree, return its maximum depth (number of nodes along the longest path from root to a leaf).",
+    "key_insight": "Recursive: 0 if None, else 1 + max(max_depth(left), max_depth(right)). Or BFS counting levels.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(h) where h = tree height",
+    "common_mistakes": [
+      "Returning 0 instead of 1 for a leaf node",
+      "Not handling None root (should return 0)"
+    ],
+    "hints": [
+      "What is the depth of an empty tree? A single node?",
+      "if not root: return 0. return 1 + max(max_depth(root.left), max_depth(root.right)).",
+      "BFS alternative: level-order traversal, count levels."
+    ],
+    "examples": [
+      {"input": {"root": [3,9,20,null,null,15,7]}, "output": 3},
+      {"input": {"root": [1,null,2]}, "output": 2}
+    ],
+    "test_cases": [
+      {"input": {"root": [3,9,20,null,null,15,7]}, "expected": 3, "input_converters": {"root": "list_to_tree"}},
+      {"input": {"root": [1,null,2]}, "expected": 2, "input_converters": {"root": "list_to_tree"}},
+      {"input": {"root": []}, "expected": 0, "input_converters": {"root": "list_to_tree"}}
+    ]
+  },
+  {
+    "id": 69,
+    "title": "Same Tree",
+    "frequency": 82,
+    "difficulty": "Easy",
+    "pattern": "Tree DFS/BFS",
+    "tags": ["tree", "dfs", "bfs", "recursion"],
+    "companies": ["Amazon", "Google", "Facebook", "Bloomberg"],
+    "function_name": "is_same_tree",
+    "signature": "def is_same_tree(p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:",
+    "description": "Given the roots of two binary trees p and q, return true if they are structurally identical with the same node values.",
+    "key_insight": "Both None → True. One None → False. Same val AND recursively same left/right subtrees.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(h)",
+    "common_mistakes": [
+      "Only comparing values without recursing on children",
+      "Not handling the case where one is None and the other is not"
+    ],
+    "hints": [
+      "What are the base cases for comparing two trees?",
+      "if not p and not q: return True. if not p or not q: return False.",
+      "return p.val==q.val and is_same_tree(p.left,q.left) and is_same_tree(p.right,q.right)"
+    ],
+    "examples": [
+      {"input": {"p": [1,2,3], "q": [1,2,3]}, "output": true},
+      {"input": {"p": [1,2], "q": [1,null,2]}, "output": false}
+    ],
+    "test_cases": [
+      {"input": {"p": [1,2,3], "q": [1,2,3]}, "expected": true, "input_converters": {"p": "list_to_tree", "q": "list_to_tree"}},
+      {"input": {"p": [1,2], "q": [1,null,2]}, "expected": false, "input_converters": {"p": "list_to_tree", "q": "list_to_tree"}},
+      {"input": {"p": [1,2,1], "q": [1,1,2]}, "expected": false, "input_converters": {"p": "list_to_tree", "q": "list_to_tree"}}
+    ]
+  },
+  {
+    "id": 70,
+    "title": "Invert Binary Tree",
+    "frequency": 85,
+    "difficulty": "Easy",
+    "pattern": "Tree DFS/BFS",
+    "tags": ["tree", "dfs", "bfs", "recursion"],
+    "companies": ["Google", "Amazon", "Facebook", "Microsoft", "Apple"],
+    "function_name": "invert_tree",
+    "signature": "def invert_tree(root: Optional[TreeNode]) -> Optional[TreeNode]:",
+    "description": "Given the root of a binary tree, invert the tree (mirror it) and return its root.",
+    "key_insight": "Swap left and right children at every node, then recursively invert each subtree. Return root.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(h)",
+    "common_mistakes": [
+      "Forgetting to return root",
+      "Not recursing after the swap (only swaps top level)"
+    ],
+    "hints": [
+      "What needs to happen at each node?",
+      "Swap root.left and root.right. Then invert each subtree recursively.",
+      "root.left,root.right=invert_tree(root.right),invert_tree(root.left); return root"
+    ],
+    "examples": [
+      {"input": {"root": [4,2,7,1,3,6,9]}, "output": [4,7,2,9,6,3,1]},
+      {"input": {"root": [2,1,3]}, "output": [2,3,1]}
+    ],
+    "test_cases": [
+      {"input": {"root": [4,2,7,1,3,6,9]}, "expected": [4,7,2,9,6,3,1], "input_converters": {"root": "list_to_tree"}, "output_converter": "tree_to_list"},
+      {"input": {"root": [2,1,3]}, "expected": [2,3,1], "input_converters": {"root": "list_to_tree"}, "output_converter": "tree_to_list"},
+      {"input": {"root": []}, "expected": [], "input_converters": {"root": "list_to_tree"}, "output_converter": "tree_to_list"}
+    ]
+  },
+  {
+    "id": 71,
+    "title": "Binary Tree Maximum Path Sum",
+    "frequency": 83,
+    "difficulty": "Hard",
+    "pattern": "Tree DFS/BFS",
+    "tags": ["tree", "dfs", "dynamic programming"],
+    "companies": ["Amazon", "Google", "Facebook", "Microsoft", "Bloomberg"],
+    "function_name": "max_path_sum",
+    "signature": "def max_path_sum(root: Optional[TreeNode]) -> int:",
+    "description": "Given the root of a binary tree, find the path with the maximum sum. The path may start and end at any node and does not need to pass through the root.",
+    "key_insight": "For each node: left_gain = max(dfs(left), 0); right_gain = max(dfs(right), 0). Update global max with node.val + left_gain + right_gain. Return node.val + max(left_gain, right_gain) to parent.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(h)",
+    "common_mistakes": [
+      "Allowing negative contributions from children (must clamp to 0)",
+      "Confusing the return value (single path up) with the global max update (can use both sides)"
+    ],
+    "hints": [
+      "Why must you clamp child contributions to 0?",
+      "A negative subtree always hurts the sum — clamp: left_gain = max(dfs(left), 0).",
+      "Update res=max(res, node.val+left+right). Return node.val+max(left,right) to parent."
+    ],
+    "examples": [
+      {"input": {"root": [1,2,3]}, "output": 6},
+      {"input": {"root": [-10,9,20,null,null,15,7]}, "output": 42}
+    ],
+    "test_cases": [
+      {"input": {"root": [1,2,3]}, "expected": 6, "input_converters": {"root": "list_to_tree"}},
+      {"input": {"root": [-10,9,20,null,null,15,7]}, "expected": 42, "input_converters": {"root": "list_to_tree"}},
+      {"input": {"root": [-3]}, "expected": -3, "input_converters": {"root": "list_to_tree"}}
+    ]
+  },
+  {
+    "id": 72,
+    "title": "Binary Tree Level Order Traversal",
+    "frequency": 87,
+    "difficulty": "Medium",
+    "pattern": "Tree DFS/BFS",
+    "tags": ["tree", "bfs"],
+    "companies": ["Amazon", "Microsoft", "Facebook", "Google", "Bloomberg"],
+    "function_name": "level_order",
+    "signature": "def level_order(root: Optional[TreeNode]) -> List[List[int]]:",
+    "description": "Given the root of a binary tree, return the level order traversal of its nodes' values (i.e., from left to right, level by level).",
+    "key_insight": "BFS with a deque. At each level, process exactly len(queue) nodes (snapshot size before expanding children). Collect each level's values into a sublist.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "common_mistakes": [
+      "Processing the entire queue instead of one level at a time",
+      "Not snapshotting the queue length before the inner loop"
+    ],
+    "hints": [
+      "How do you process exactly one level of the tree at a time?",
+      "Queue BFS. At start of each iteration: size=len(queue). Process exactly size nodes.",
+      "from collections import deque. q=deque([root]). while q: size=len(q); level=[q.popleft() for _ in range(size)]"
+    ],
+    "examples": [
+      {"input": {"root": [3,9,20,null,null,15,7]}, "output": [[3],[9,20],[15,7]]},
+      {"input": {"root": [1]}, "output": [[1]]}
+    ],
+    "test_cases": [
+      {"input": {"root": [3,9,20,null,null,15,7]}, "expected": [[3],[9,20],[15,7]], "input_converters": {"root": "list_to_tree"}},
+      {"input": {"root": [1]}, "expected": [[1]], "input_converters": {"root": "list_to_tree"}},
+      {"input": {"root": []}, "expected": [], "input_converters": {"root": "list_to_tree"}}
+    ]
+  },
+  {
+    "id": 73,
+    "title": "Subtree of Another Tree",
+    "frequency": 80,
+    "difficulty": "Easy",
+    "pattern": "Tree DFS/BFS",
+    "tags": ["tree", "dfs", "string matching"],
+    "companies": ["Amazon", "Facebook", "Google", "Microsoft"],
+    "function_name": "is_subtree",
+    "signature": "def is_subtree(root: Optional[TreeNode], sub_root: Optional[TreeNode]) -> bool:",
+    "description": "Given the roots of two binary trees root and subRoot, return true if there is a subtree of root with the same structure and node values as subRoot.",
+    "key_insight": "Check if the current node matches subRoot (same tree check), or if subRoot is a subtree of left or right child. Use a helper is_same_tree for structural equality.",
+    "time_complexity": "O(m * n) where m,n are tree sizes",
+    "space_complexity": "O(h)",
+    "common_mistakes": [
+      "Not checking structural equality deeply (node [4,1,2,0] is NOT the same as [4,1,2])",
+      "Only checking values at the root level without full recursion"
+    ],
+    "hints": [
+      "How do you check if two trees are structurally identical?",
+      "Helper same(p,q): both None→True, one None→False, val match and recurse.",
+      "is_subtree(root,sub): if same(root,sub): return True. return is_subtree(root.left,sub) or is_subtree(root.right,sub)"
+    ],
+    "examples": [
+      {"input": {"root": [3,4,5,1,2], "sub_root": [4,1,2]}, "output": true},
+      {"input": {"root": [3,4,5,1,2,null,null,null,null,0], "sub_root": [4,1,2]}, "output": false}
+    ],
+    "test_cases": [
+      {"input": {"root": [3,4,5,1,2], "sub_root": [4,1,2]}, "expected": true, "input_converters": {"root": "list_to_tree", "sub_root": "list_to_tree"}},
+      {"input": {"root": [3,4,5,1,2,null,null,null,null,0], "sub_root": [4,1,2]}, "expected": false, "input_converters": {"root": "list_to_tree", "sub_root": "list_to_tree"}},
+      {"input": {"root": [1,2], "sub_root": [1]}, "expected": false, "input_converters": {"root": "list_to_tree", "sub_root": "list_to_tree"}}
+    ]
+  },
+  {
+    "id": 74,
+    "title": "Construct Binary Tree from Preorder and Inorder Traversal",
+    "frequency": 82,
+    "difficulty": "Medium",
+    "pattern": "Tree DFS/BFS",
+    "tags": ["tree", "array", "hash map", "divide and conquer"],
+    "companies": ["Amazon", "Google", "Facebook", "Microsoft", "Bloomberg"],
+    "function_name": "build_tree",
+    "signature": "def build_tree(preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:",
+    "description": "Given two integer arrays preorder and inorder where preorder is the preorder traversal and inorder is the inorder traversal of the same binary tree, construct and return the binary tree.",
+    "key_insight": "preorder[0] is always the root. Find it in inorder to split left/right subtrees. Use a hashmap for O(1) inorder index lookup. Recurse with correct slice offsets.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "common_mistakes": [
+      "O(n²) repeated linear search for root in inorder (use hashmap)",
+      "Incorrect slice lengths for preorder left/right subtrees"
+    ],
+    "hints": [
+      "preorder[0] is the root. How do you find where the left subtree ends in preorder?",
+      "Find root index in inorder: idx = inorder_map[preorder[0]]. Left subtree has idx elements.",
+      "preorder left: preorder[1:1+idx]. preorder right: preorder[1+idx:]. Recurse on each half."
+    ],
+    "examples": [
+      {"input": {"preorder": [3,9,20,15,7], "inorder": [9,3,15,20,7]}, "output": [3,9,20,null,null,15,7]},
+      {"input": {"preorder": [1,2], "inorder": [2,1]}, "output": [1,2]}
+    ],
+    "test_cases": [
+      {"input": {"preorder": [3,9,20,15,7], "inorder": [9,3,15,20,7]}, "expected": [3,9,20,null,null,15,7], "output_converter": "tree_to_list"},
+      {"input": {"preorder": [1,2], "inorder": [2,1]}, "expected": [1,2], "output_converter": "tree_to_list"}
+    ]
+  },
+  {
+    "id": 75,
+    "title": "Validate Binary Search Tree",
+    "frequency": 86,
+    "difficulty": "Medium",
+    "pattern": "Tree DFS/BFS",
+    "tags": ["tree", "dfs", "bfs"],
+    "companies": ["Amazon", "Microsoft", "Facebook", "Google", "Bloomberg"],
+    "function_name": "is_valid_bst",
+    "signature": "def is_valid_bst(root: Optional[TreeNode]) -> bool:",
+    "description": "Given the root of a binary tree, determine if it is a valid binary search tree. A BST requires all left subtree values < node < all right subtree values (strict).",
+    "key_insight": "Pass valid range [low, high] through recursion. Node is valid if low < val < high. Use float('-inf') and float('inf') as initial bounds.",
+    "time_complexity": "O(n)",
+    "space_complexity": "O(h)",
+    "common_mistakes": [
+      "Only comparing node with direct children (misses [5,4,6,null,null,3,7] which is invalid)",
+      "Using <= instead of < (BST requires strict inequality)"
+    ],
+    "hints": [
+      "Why doesn't it suffice to compare each node to its direct children?",
+      "Pass range (min_val, max_val). Left child must be < node.val (new max). Right child must be > node.val (new min).",
+      "def validate(node, lo, hi): if not node: return True. if not (lo < node.val < hi): return False."
+    ],
+    "examples": [
+      {"input": {"root": [2,1,3]}, "output": true},
+      {"input": {"root": [5,1,4,null,null,3,6]}, "output": false}
+    ],
+    "test_cases": [
+      {"input": {"root": [2,1,3]}, "expected": true, "input_converters": {"root": "list_to_tree"}},
+      {"input": {"root": [5,1,4,null,null,3,6]}, "expected": false, "input_converters": {"root": "list_to_tree"}},
+      {"input": {"root": [2,2,2]}, "expected": false, "input_converters": {"root": "list_to_tree"}}
+    ]
+  },
+  {
+    "id": 76,
+    "title": "Kth Smallest Element in a BST",
+    "frequency": 82,
+    "difficulty": "Medium",
+    "pattern": "Tree DFS/BFS",
+    "tags": ["tree", "dfs", "binary search tree"],
+    "companies": ["Amazon", "Facebook", "Google", "Microsoft", "Bloomberg"],
+    "function_name": "kth_smallest",
+    "signature": "def kth_smallest(root: Optional[TreeNode], k: int) -> int:",
+    "description": "Given the root of a binary search tree and an integer k, return the kth smallest value (1-indexed) of all the values in the tree.",
+    "key_insight": "In-order traversal of a BST produces values in sorted order. The kth element visited in-order is the answer. Iterative with a stack allows early termination.",
+    "time_complexity": "O(H + k) where H = tree height",
+    "space_complexity": "O(H)",
+    "common_mistakes": [
+      "Full in-order traversal then indexing (correct but visits all nodes unnecessarily)",
+      "Not knowing BST in-order traversal = sorted order"
+    ],
+    "hints": [
+      "What property of BST in-order traversal helps here?",
+      "BST in-order gives sorted values. The kth value in-order is the answer.",
+      "Iterative: stack, cur=root. Pop, decrement k; if k==0, return val. Push right then go left."
+    ],
+    "examples": [
+      {"input": {"root": [3,1,4,null,2], "k": 1}, "output": 1},
+      {"input": {"root": [5,3,6,2,4,null,null,1], "k": 3}, "output": 3}
+    ],
+    "test_cases": [
+      {"input": {"root": [3,1,4,null,2], "k": 1}, "expected": 1, "input_converters": {"root": "list_to_tree"}},
+      {"input": {"root": [5,3,6,2,4,null,null,1], "k": 3}, "expected": 3, "input_converters": {"root": "list_to_tree"}}
+    ]
+  },
+  {
+    "id": 77,
+    "title": "Lowest Common Ancestor of a Binary Search Tree",
+    "frequency": 84,
+    "difficulty": "Medium",
+    "pattern": "Tree DFS/BFS",
+    "tags": ["tree", "dfs", "binary search tree"],
+    "companies": ["Amazon", "Microsoft", "Facebook", "Google", "LinkedIn"],
+    "function_name": "lowest_common_ancestor",
+    "signature": "def lowest_common_ancestor(root: Optional[TreeNode], p: int, q: int) -> int:",
+    "description": "Given a BST and two integer values p and q, return the value of their lowest common ancestor node. The LCA is the lowest node that has both p and q as descendants (or is one of them).",
+    "key_insight": "BST property: if both p and q < root.val, LCA is in left subtree. If both > root.val, LCA is in right subtree. Otherwise current root is the LCA.",
+    "time_complexity": "O(H) where H = tree height",
+    "space_complexity": "O(1) iterative",
+    "common_mistakes": [
+      "Not using BST property (treating as general binary tree — much slower)",
+      "Off-by-one with equal values (if p or q equals root.val, root is the LCA)"
+    ],
+    "hints": [
+      "How does the BST property let you navigate directly to the LCA?",
+      "If both < root.val: go left. If both > root.val: go right. Else: root is LCA.",
+      "while root: if p<root.val and q<root.val: root=root.left elif p>root.val and q>root.val: root=root.right else: return root.val"
+    ],
+    "examples": [
+      {"input": {"root": [6,2,8,0,4,7,9,null,null,3,5], "p": 2, "q": 8}, "output": 6},
+      {"input": {"root": [6,2,8,0,4,7,9,null,null,3,5], "p": 2, "q": 4}, "output": 2}
+    ],
+    "test_cases": [
+      {"input": {"root": [6,2,8,0,4,7,9,null,null,3,5], "p": 2, "q": 8}, "expected": 6, "input_converters": {"root": "list_to_tree"}},
+      {"input": {"root": [6,2,8,0,4,7,9,null,null,3,5], "p": 2, "q": 4}, "expected": 2, "input_converters": {"root": "list_to_tree"}},
+      {"input": {"root": [2,1], "p": 1, "q": 2}, "expected": 2, "input_converters": {"root": "list_to_tree"}}
+    ]
+  }
+]

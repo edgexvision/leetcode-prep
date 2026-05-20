@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pattern Concepts — LeetCodePrep</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  </head>
+  <body>
+    <header>
+      <a class="nav-link" href="{{ url_for('index') }}">← Back to practice board</a>
+      <h1>Interview Patterns</h1>
+      <p>Master these 12 patterns and you can solve 90% of coding interview questions. Pattern recognition is the skill — not memorization.</p>
+    </header>
+
+    <main>
+      <div class="concepts-grid">
+        {% for pattern_name, info in concepts.items() %}
+        <div class="panel concept-full-card">
+          <div class="concept-header">
+            <h2>{{ pattern_name }}</h2>
+            {% if metrics.pattern_coverage.get(pattern_name) %}
+            <span class="badge badge-green">✓ Practiced</span>
+            {% else %}
+            <span class="badge badge-grey">Not yet practiced</span>
+            {% endif %}
+          </div>
+
+          <p class="concept-what">{{ info.what }}</p>
+
+          <div class="concept-section">
+            <strong>When to use:</strong>
+            <p>{{ info.when_to_use }}</p>
+          </div>
+
+          <div class="concept-section">
+            <strong>Template:</strong>
+            <pre class="code-block"><code>{{ info.template }}</code></pre>
+          </div>
+
+          <div class="concept-section">
+            <strong>Watch out for:</strong>
+            <ul>
+              {% for item in info.watch_out %}
+              <li>{{ item }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          <div class="concept-section">
+            <strong>Practice questions:</strong>
+            <div class="concept-questions">
+              {% for q in info.key_questions %}
+              <span class="q-chip">{{ q }}</span>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <section class="panel interview-tips-panel">
+        <h2>How to Approach Any Coding Question</h2>
+        <ol class="tips-list">
+          <li><strong>Clarify (2 min):</strong> Ask about input size, edge cases (empty, negative, duplicates), and output format. Never start coding without this.</li>
+          <li><strong>Identify the pattern (1 min):</strong> What is this problem really asking? Is it a search? A frequency count? A path through a graph? Match it to a known pattern.</li>
+          <li><strong>State your approach out loud (2 min):</strong> Explain your plan in plain English before touching the keyboard. Name the pattern. State time and space complexity.</li>
+          <li><strong>Code from top to bottom (10-15 min):</strong> Write clean, named variables. Handle the main case first, then edge cases.</li>
+          <li><strong>Test with examples (3-5 min):</strong> Walk through your code with the given examples by hand. Then check: empty input, single element, all duplicates, negative numbers.</li>
+          <li><strong>Optimize if time allows:</strong> Can you improve time complexity? Space? Mention the trade-off even if you don't code it.</li>
+        </ol>
+
+        <h2>Edge Cases to Always Consider</h2>
+        <div class="edge-cases-grid">
+          <div class="edge-case-card">
+            <strong>Arrays</strong>
+            <ul>
+              <li>Empty array []</li>
+              <li>Single element [x]</li>
+              <li>All same elements [x,x,x]</li>
+              <li>Negative numbers</li>
+              <li>Already sorted</li>
+              <li>Reverse sorted</li>
+            </ul>
+          </div>
+          <div class="edge-case-card">
+            <strong>Strings</strong>
+            <ul>
+              <li>Empty string ""</li>
+              <li>Single character</li>
+              <li>All same characters</li>
+              <li>Unicode / spaces</li>
+              <li>Case sensitivity</li>
+            </ul>
+          </div>
+          <div class="edge-case-card">
+            <strong>Graphs / Trees</strong>
+            <ul>
+              <li>Empty graph / null root</li>
+              <li>Single node</li>
+              <li>Disconnected components</li>
+              <li>Cycles</li>
+              <li>Very deep tree (recursion limit)</li>
+            </ul>
+          </div>
+          <div class="edge-case-card">
+            <strong>Numbers</strong>
+            <ul>
+              <li>Zero</li>
+              <li>Negative numbers</li>
+              <li>Integer overflow (mention it)</li>
+              <li>k = 0 or k = n</li>
+              <li>target not achievable</li>
+            </ul>
+          </div>
+        </div>
+
+        <h2>Complexity Cheat Sheet</h2>
+        <table class="complexity-table">
+          <tr><th>Algorithm</th><th>Time</th><th>Space</th></tr>
+          <tr><td>Hash map lookup</td><td>O(1) avg</td><td>O(n)</td></tr>
+          <tr><td>Binary search</td><td>O(log n)</td><td>O(1)</td></tr>
+          <tr><td>Sorting</td><td>O(n log n)</td><td>O(log n)</td></tr>
+          <tr><td>DFS / BFS (graph)</td><td>O(V + E)</td><td>O(V)</td></tr>
+          <tr><td>Two pointers</td><td>O(n)</td><td>O(1)</td></tr>
+          <tr><td>Sliding window</td><td>O(n)</td><td>O(k)</td></tr>
+          <tr><td>DP 1D</td><td>O(n)</td><td>O(1) optimized</td></tr>
+          <tr><td>DP 2D</td><td>O(m×n)</td><td>O(n) optimized</td></tr>
+          <tr><td>Backtracking</td><td>O(b^d)</td><td>O(d)</td></tr>
+          <tr><td>Heap push/pop</td><td>O(log n)</td><td>O(n)</td></tr>
+        </table>
+      </section>
+    </main>
+  </body>
+</html>

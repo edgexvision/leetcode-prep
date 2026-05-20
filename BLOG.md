@@ -1,0 +1,76 @@
+# I built a self-hosted LeetCode practice tool that actually teaches you — here's how
+
+I was grinding LeetCode for months but felt like I was going in circles. I'd solve a problem, move on, and forget it completely by the time it came up in an interview. The feedback loop was broken: LeetCode tells you pass/fail, not *why* your solution is suboptimal or which pattern you should have used.
+
+So I built my own tool.
+
+## What I built
+
+A local Flask web app — 77 Blind 75 questions, a CodeMirror editor, and a real Python execution engine. No subscriptions, no ads, runs fully offline on your laptop.
+
+Here's what makes it different from just doing LeetCode.
+
+---
+
+### It reviews your *approach*, not just your output
+
+After every submission, an AST-based analyser inspects your code and tells you:
+
+- **What algorithm you actually used** — "Approach detected: Nested loops / Sorting"
+- **Your estimated time complexity** — derived from loop nesting depth
+- **Whether you used the wrong pattern** — "This is a Hash Map problem but your code doesn't show that pattern. The intended approach is O(n) with a hash map."
+
+Knowing you passed the tests is not the same as knowing you solved it well.
+
+---
+
+### Spaced repetition built in
+
+The single biggest gap between "I can understand this solution" and "I can reproduce it in an interview" is *retention*.
+
+Every submission computes a next-review date:
+- Failed → review tomorrow
+- Passed (first time) → 3 days
+- Passed repeatedly → 7 → 14 → 30 days
+- Slow or messy code → interval halved
+
+The home page shows a **Due for Review** queue. You open those questions cold, no hints, and try to reproduce your solution from scratch. That's exactly what an interview tests.
+
+---
+
+### Time tracking shows you getting faster
+
+A live stopwatch runs while you code. Every submission stores the elapsed time. After a few attempts, a small bar chart shows your improvement: 45 min → 28 min → 14 min. That trend is more motivating than any streak counter.
+
+---
+
+### The hints are tiered and the insights are hidden
+
+Each question has three hints, revealed one at a time — you only look at the next one if you're genuinely stuck. The key insight (the core "aha" for the problem) is hidden behind a separate toggle so you're forced to think first.
+
+---
+
+### Interview readiness score
+
+A 0–100 score tracks: pattern coverage (have you touched every major pattern?), code quality, difficulty mix (you should be doing 60% Medium), and total volume. It's not a vanity metric — it's calibrated so that hitting 80+ means you've done the work.
+
+---
+
+## The stack
+
+Python 3.10+, Flask, CodeMirror 5. No database — just a JSON file for history. Runs fully offline.
+
+## Get it
+
+[github.com/krishnakumar/leetcode-prep](https://github.com/krishnakumar/leetcode-prep) ← update with your actual URL
+
+```bash
+pip install flask
+python3 -m leetcode_tool.main serve
+```
+
+Open `http://localhost:5000` and start practicing.
+
+---
+
+Would love feedback. If you use it and find something broken or have ideas, open an issue.

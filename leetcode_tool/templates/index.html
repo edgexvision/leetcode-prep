@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LeetCodePrep — Practice Board</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  </head>
+  <body>
+    <header>
+      <h1>LeetCodePrep</h1>
+      <p>77 Blind 75 questions — track patterns, measure readiness, crack the coding round.</p>
+      <nav class="header-nav">
+        <a href="{{ url_for('index') }}">Practice Board</a>
+        <a href="{{ url_for('concepts_page') }}">Pattern Concepts</a>
+      </nav>
+    </header>
+
+    <main>
+
+      <!-- READINESS METRICS -->
+      <section class="panel metrics-panel">
+        <div class="metrics-header">
+          <div class="readiness-ring">
+            <svg viewBox="0 0 100 100" class="ring-svg">
+              <circle cx="50" cy="50" r="40" class="ring-bg"/>
+              <circle cx="50" cy="50" r="40" class="ring-fill"
+                style="stroke-dasharray: {{ (metrics.readiness_score / 100 * 251.2) | round(1) }} 251.2"/>
+            </svg>
+            <div class="ring-label">
+              <span class="ring-score">{{ metrics.readiness_score }}</span>
+              <span class="ring-sub">/ 100</span>
+            </div>
+          </div>
+          <div class="metrics-summary">
+            <h2>Interview Readiness</h2>
+            <p class="pass-label pass-{{ metrics.pass_label | replace(' ', '-') | lower }}">{{ metrics.pass_label }}</p>
+            <p>Estimated pass probability: <strong>{{ metrics.pass_probability }}%</strong></p>
+            <p>Submissions: <strong>{{ metrics.total_submissions }}</strong> &nbsp;|&nbsp; Avg score: <strong>{{ metrics.avg_score }}</strong></p>
+            <p>Patterns covered: <strong>{{ metrics.covered_count }} / {{ metrics.total_patterns }}</strong></p>
+          </div>
+        </div>
+
+        <div class="pattern-grid">
+          {% for pattern, covered in metrics.pattern_coverage.items() %}
+          <div class="pattern-chip {% if covered %}covered{% else %}not-covered{% endif %}">
+            {% if covered %}<span class="dot green">✓</span>{% else %}<span class="dot grey">○</span>{% endif %}
+            {{ pattern }}
+          </div>
+          {% endfor %}
+        </div>
+
+        {% if metrics.weaknesses %}
+        <div class="weakness-bar">
+          <strong>Focus on:</strong>
+          {% for w in metrics.weaknesses %}
+          <span class="badge badge-red">{{ w }}</span>
+          {% endfor %}
+        </div>
+        {% endif %}
+        {% if metrics.strengths %}
+        <div class="weakness-bar">
+          <strong>Strengths:</strong>
+          {% for s in metrics.strengths %}
+          <span class="badge badge-green">{{ s }}</span>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </section>
+
+      <div class="index-grid">
+
+        <!-- QUESTION LIST -->
+        <section class="panel">
+          <h2>{{ questions | length }} Practice Questions</h2>
+          <div class="filter-row">
+            <span class="filter-label">Difficulty:</span>
+            <button class="filter-btn active" data-filter="All" data-group="diff">All</button>
+            <button class="filter-btn" data-filter="Easy" data-group="diff">Easy</button>
+            <button class="filter-btn" data-filter="Medium" data-group="diff">Medium</button>
+            <button class="filter-btn" data-filter="Hard" data-group="diff">Hard</button>
+          </div>
+          <div class="filter-row">
+            <span class="filter-label">Status:</span>
+            <button class="filter-btn active" data-filter="All" data-group="status">All</button>
+            <button class="filter-btn" data-filter="Not attempted" data-group="status">Unsolved</button>
+            <button class="filter-btn" data-filter="Attempted" data-group="status">Attempted</button>
+            <button class="filter-btn" data-filter="Solved" data-group="status">Solved</button>
+          </div>
+          <div class="filter-row company-filter-row">
+            <span class="filter-label">Company:</span>
+            <button class="filter-btn active" data-filter="All" data-group="company">All</button>
+            {% for company in companies %}
+            <button class="filter-btn" data-filter="{{ company }}" data-group="company">{{ company }}</button>
+            {% endfor %}
+          </div>
+          <ul class="question-list" id="question-list">
+            {% for q in questions %}
+            {% if q.id in status.solved %}
+              {% set status_icon = '✓' %}
+              {% set status_class = 'status-solved' %}
+              {% set status_title = 'Solved' %}
+            {% elif q.id in status.attempted %}
+              {% set status_icon = '~' %}
+              {% set status_class = 'status-attempted' %}
+              {% set status_title = 'Attempted' %}
+            {% else %}
+              {% set status_icon = '○' %}
+              {% set status_class = 'status-unsolved' %}
+              {% set status_title = 'Not attempted' %}
+            {% endif %}
+            <li data-difficulty="{{ q.difficulty }}" data-pattern="{{ q.get('pattern','') }}" data-status="{{ status_title }}" data-companies="{{ q.get('companies', []) | join('|') }}">
+              <span class="q-status {{ status_class }}" title="{{ status_title }}">{{ status_icon }}</span>
+              <a href="{{ url_for('question_view', question_id=q.id) }}">[{{ q.id }}] {{ q.title }}</a>
+              <span class="meta">
+                <span class="diff-badge diff-{{ q.difficulty | lower }}">{{ q.difficulty }}</span>
+                <span class="pattern-tag">{{ q.get('pattern', '') }}</span>
+                &nbsp;freq {{ q.frequency }}
+              </span>
+            </li>
+            {% endfor %}
+          </ul>
+        </section>
+
+        <div class="side-panels">
+
+          <!-- DUE FOR REVIEW -->
+          {% if due_questions %}
+          <section class="panel due-panel">
+            <h2>📅 Due for Review <span class="due-count">{{ due_questions | length }}</span></h2>
+            <p class="muted" style="margin-top:-0.5rem;margin-bottom:0.75rem">You've solved these before — time to redo from memory.</p>
+            <ul class="question-list">
+              {% for q in due_questions %}
+              <li>
+                <a href="{{ url_for('question_view', question_id=q.id) }}">[{{ q.id }}] {{ q.title }}</a>
+                <span class="meta">
+                  <span class="diff-badge diff-{{ q.difficulty | lower }}">{{ q.difficulty }}</span>
+                  <span class="pattern-tag">{{ q.get('pattern', '') }}</span>
+                </span>
+              </li>
+              {% endfor %}
+            </ul>
+          </section>
+          {% endif %}
+
+          <!-- RECOMMENDED -->
+          <section class="panel">
+            <h2>Recommended Next</h2>
+            {% if recommended %}
+            <ul class="question-list">
+              {% for q in recommended %}
+              <li>
+                <a href="{{ url_for('question_view', question_id=q.id) }}">[{{ q.id }}] {{ q.title }}</a>
+                <span class="meta diff-badge diff-{{ q.difficulty | lower }}">{{ q.difficulty }}</span>
+              </li>
+              {% endfor %}
+            </ul>
+            {% else %}
+            <p class="muted">Submit solutions to unlock personalized recommendations.</p>
+            {% endif %}
+          </section>
+
+          <!-- DIFFICULTY BREAKDOWN -->
+          <section class="panel">
+            <h2>Your Difficulty Mix</h2>
+            {% set total = metrics.difficulty_breakdown.Easy + metrics.difficulty_breakdown.Medium + metrics.difficulty_breakdown.Hard %}
+            {% if total > 0 %}
+            <div class="diff-bar-wrap">
+              <div class="diff-bar">
+                {% if metrics.difficulty_breakdown.Easy > 0 %}
+                <div class="diff-seg easy" style="width:{{ (metrics.difficulty_breakdown.Easy / total * 100)|round }}%">Easy</div>
+                {% endif %}
+                {% if metrics.difficulty_breakdown.Medium > 0 %}
+                <div class="diff-seg medium" style="width:{{ (metrics.difficulty_breakdown.Medium / total * 100)|round }}%">Medium</div>
+                {% endif %}
+                {% if metrics.difficulty_breakdown.Hard > 0 %}
+                <div class="diff-seg hard" style="width:{{ (metrics.difficulty_breakdown.Hard / total * 100)|round }}%">Hard</div>
+                {% endif %}
+              </div>
+              <p class="muted">Easy: {{ metrics.difficulty_breakdown.Easy }} &nbsp; Medium: {{ metrics.difficulty_breakdown.Medium }} &nbsp; Hard: {{ metrics.difficulty_breakdown.Hard }}</p>
+            </div>
+            <p class="tip">Aim for 20% Easy / 60% Medium / 20% Hard for most FAANG rounds.</p>
+            {% else %}
+            <p class="muted">No submissions yet.</p>
+            {% endif %}
+          </section>
+
+          <!-- CONCEPTS LINK -->
+          <section class="panel">
+            <h2>Learn the Patterns</h2>
+            <p class="muted">Every question maps to a core pattern. Understanding the pattern is more important than memorizing solutions.</p>
+            <a href="{{ url_for('concepts_page') }}" class="btn btn-outline">Open Pattern Concepts →</a>
+          </section>
+        </div>
+
+      </div>
+    </main>
+
+    <script>
+      const items = document.querySelectorAll('#question-list li');
+      let activeFilters = { diff: 'All', status: 'All', company: 'All' };
+
+      function applyFilters() {
+        items.forEach(li => {
+          const diffOk = activeFilters.diff === 'All' || li.dataset.difficulty === activeFilters.diff;
+          const statusOk = activeFilters.status === 'All' || li.dataset.status === activeFilters.status;
+          const companyOk = activeFilters.company === 'All' ||
+            (li.dataset.companies || '').split('|').includes(activeFilters.company);
+          li.style.display = (diffOk && statusOk && companyOk) ? '' : 'none';
+        });
+      }
+
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const group = btn.dataset.group;
+          document.querySelectorAll(`.filter-btn[data-group="${group}"]`).forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          activeFilters[group] = btn.dataset.filter;
+          applyFilters();
+        });
+      });
+    </script>
+  </body>
+</html>

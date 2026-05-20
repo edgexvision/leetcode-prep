@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ question.title }} — LeetCodePrep</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
+  </head>
+  <body>
+    <header>
+      <a class="nav-link" href="{{ url_for('index') }}">← Back to practice board</a>
+      <h1>{{ question.title }}</h1>
+      <div class="q-meta-row">
+        <span class="diff-badge diff-{{ question.difficulty | lower }}">{{ question.difficulty }}</span>
+        <span class="pattern-tag">{{ question.get('pattern', '') }}</span>
+        <span class="freq-tag">Freq {{ question.frequency }}</span>
+        {% if question.companies %}
+        <span class="companies-tag">Asked at: {{ question.companies | join(', ') }}</span>
+        {% endif %}
+      </div>
+    </header>
+
+    <main class="q-main">
+
+      <!-- ── ROW 1: Problem + Editor side by side ── -->
+      <div class="top-row">
+
+        <!-- Problem description -->
+        <div class="panel problem-panel">
+          <h2>Problem</h2>
+
+          <p class="description-text">{{ question.description }}</p>
+
+          {% if question.get('key_insight') %}
+          <details class="insight-reveal">
+            <summary>Key Insight</summary>
+            <div class="key-insight-box">{{ question.key_insight }}</div>
+          </details>
+          {% endif %}
+
+          <div class="signature-block">{{ question.signature }}</div>
+
+          <div class="complexity-row">
+            <span class="complexity-pill"><strong>Time:</strong> {{ question.get('time_complexity','—') }}</span>
+            <span class="complexity-pill"><strong>Space:</strong> {{ question.get('space_complexity','—') }}</span>
+          </div>
+
+          <div class="examples">
+            <strong>Examples</strong>
+            {% for ex in question.examples %}
+            <div class="example-block">
+              <div class="example-io">
+                <div class="example-io-row">
+                  <span class="example-io-label">Input</span>
+                  <span class="example-io-value">{% for k, v in ex.input.items() %}{{ k }} = {{ v }}{% if not loop.last %},  {% endif %}{% endfor %}</span>
+                </div>
+                <div class="example-io-row">
+                  <span class="example-io-label">Output</span>
+                  <span class="example-io-value">{{ ex.output }}</span>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <!-- Hints tucked here so they're near the problem -->
+          {% if question.hints %}
+          <div class="inline-hints">
+            <strong>Hints</strong>
+            {% for hint in question.hints %}
+            <details class="hint-reveal">
+              <summary>Hint {{ loop.index }}</summary>
+              <p>{{ hint }}</p>
+            </details>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Code editor -->
+        <div class="panel editor-card">
+          <form id="solution-form" action="{{ url_for('submit') }}" method="post">
+            <input type="hidden" name="question_id" value="{{ question.id }}">
+            <input type="hidden" name="code" id="code-hidden">
+            <input type="hidden" name="time_seconds" id="time-seconds-hidden">
+            <div class="editor-label-row">
+              <strong>Your Python solution</strong>
+              <div class="editor-label-right">
+                <span class="timer-display" id="timer-display">0:00</span>
+                {% if time_hist %}
+                <span class="timer-best">Best: {{ (time_hist | sort(attribute='time_seconds') | first).time_seconds | int // 60 }}m {{ (time_hist | sort(attribute='time_seconds') | first).time_seconds | int % 60 }}s</span>
+                {% endif %}
+                <span class="editor-hint">Ctrl+Space for autocomplete</span>
+              </div>
+            </div>
+            <div id="codemirror-editor"></div>
+            <button type="submit" class="btn">Run Tests</button>
+          </form>
+        </div>
+
+      </div>
+
+      <!-- ── ROW 2: Concept + Results + Readiness ── -->
+      <div class="bottom-row">
+
+        <!-- Concept card -->
+        {% if pattern_info %}
+        <div class="panel concept-card">
+          <h3>Pattern: {{ question.get('pattern','') }}</h3>
+          <p>{{ pattern_info.what }}</p>
+          <p><strong>When to use:</strong> {{ pattern_info.when_to_use }}</p>
+          <div class="hint-section">
+            <strong>Watch out for:</strong>
+            <ul>
+              {% for m in pattern_info.watch_out %}
+              <li>{{ m }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% if question.common_mistakes %}
+          <div class="hint-section mistake-section">
+            <strong>Common mistakes on this question:</strong>
+            <ul>
+              {% for m in question.common_mistakes %}
+              <li>{{ m }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
+          <details class="template-details">
+            <summary>Show pattern template</summary>
+            <pre><code>{{ pattern_info.template }}</code></pre>
+          </details>
+        </div>
+        {% endif %}
+
+        <!-- Test results -->
+        {% if result %}
+        <div class="panel">
+          <h2>Test Results
+            {% if result.time_seconds %}
+            <span class="result-time">{{ result.time_seconds // 60 }}m {{ result.time_seconds % 60 }}s</span>
+            {% endif %}
+          </h2>
+          {% if result.passed == result.total %}
+          <p class="success">✓ All {{ result.total }} test cases passed!</p>
+          {% else %}
+          <p class="fail-summary">{{ result.passed }} / {{ result.total }} passed</p>
+          {% endif %}
+          <p class="runtime">Runtime: {{ '%.2f' | format(result.runtime_ms) }} ms</p>
+          {% if result.failed_cases %}
+          <div class="fail-list">
+            {% for fail in result.failed_cases %}
+            <div class="fail-case">
+              <p><strong>Case {{ fail.case }}</strong></p>
+              <p>Input: <code>{{ fail.input }}</code></p>
+              <p>Expected: <code>{{ fail.expected }}</code></p>
+              {% if 'output' in fail %}<p>Got: <code>{{ fail.output }}</code></p>{% endif %}
+              {% if 'error' in fail %}<p class="error-text">Error: {{ fail.error }}</p>{% endif %}
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Time history -->
+        {% if time_hist %}
+        <div class="panel time-history-panel">
+          <h2>Your Progress</h2>
+          <div class="time-history-chart">
+            {% set best = (time_hist | sort(attribute='time_seconds') | first).time_seconds %}
+            {% for t in time_hist %}
+            {% set pct = [((t.time_seconds / (time_hist | max(attribute='time_seconds')).time_seconds) * 100) | int, 8] | max %}
+            <div class="time-bar-wrap" title="{{ t.submitted_on }}">
+              <div class="time-bar {{ 'time-bar-pass' if t.passed == t.total else 'time-bar-fail' }}" style="height: {{ pct }}%"></div>
+              <div class="time-bar-label">{{ t.time_seconds // 60 }}m{{ t.time_seconds % 60 }}s</div>
+            </div>
+            {% endfor %}
+          </div>
+          <p class="time-summary">
+            Best: <strong>{{ best // 60 }}m {{ best % 60 }}s</strong>
+            &nbsp;·&nbsp; Last: <strong>{{ time_hist[-1].time_seconds // 60 }}m {{ time_hist[-1].time_seconds % 60 }}s</strong>
+            &nbsp;·&nbsp; {{ time_hist | length }} attempt{{ 's' if time_hist | length != 1 }}
+          </p>
+        </div>
+        {% endif %}
+
+        <!-- Code critique -->
+        {% if feedback %}
+        <div class="panel critique-panel">
+          <div class="critique-header">
+            <h2>Code Review</h2>
+            <span class="score-ring score-{{ 'good' if feedback.score >= 80 else ('ok' if feedback.score >= 55 else 'bad') }}">{{ feedback.score }}<span class="score-ring-sub">/100</span></span>
+          </div>
+
+          {% if feedback.get('error') %}
+          <div class="error-box">{{ feedback.error }}</div>
+          {% endif %}
+
+          <!-- Approach detected -->
+          {% if feedback.approach %}
+          <div class="critique-section">
+            <div class="critique-section-label">Approach detected</div>
+            <div class="approach-tags">
+              {% for a in feedback.approach %}
+              <span class="approach-tag">{{ a }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- Estimated complexity -->
+          {% if feedback.estimated_complexity %}
+          <div class="critique-section">
+            <div class="critique-section-label">Estimated time complexity</div>
+            <code class="complexity-estimate">{{ feedback.estimated_complexity }}</code>
+            <span class="complexity-expected"> (target: {{ question.get('time_complexity','—') }})</span>
+          </div>
+          {% endif %}
+
+          <!-- Pattern warning -->
+          {% if feedback.pattern_warning %}
+          <div class="critique-item critique-warn">
+            <span class="critique-icon">⚠</span>
+            <span>{{ feedback.pattern_warning }}</span>
+          </div>
+          {% endif %}
+
+          <!-- Efficiency issues -->
+          {% for item in feedback.efficiency %}
+          <div class="critique-item critique-efficiency">
+            <span class="critique-icon">⚡</span>
+            <span>{{ item }}</span>
+          </div>
+          {% endfor %}
+
+          <!-- Readability issues -->
+          {% for item in feedback.readability %}
+          <div class="critique-item critique-readability">
+            <span class="critique-icon">👁</span>
+            <span>{{ item }}</span>
+          </div>
+          {% endfor %}
+
+          <!-- Style issues -->
+          {% for item in feedback.style %}
+          <div class="critique-item critique-style">
+            <span class="critique-icon">✏</span>
+            <span>{{ item }}</span>
+          </div>
+          {% endfor %}
+
+          <!-- Risk issues -->
+          {% for item in feedback.risk %}
+          <div class="critique-item critique-risk">
+            <span class="critique-icon">🔴</span>
+            <span>{{ item }}</span>
+          </div>
+          {% endfor %}
+
+          {% set has_issues = feedback.pattern_warning or feedback.efficiency or feedback.readability or feedback.style or feedback.risk %}
+          {% if not has_issues and not feedback.get('error') %}
+          <div class="critique-item critique-pass">
+            <span class="critique-icon">✓</span>
+            <span>Clean code — no issues found. Good job!</span>
+          </div>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Readiness + recommended -->
+        <div class="panel">
+          <h2>Readiness: {{ metrics.readiness_score }}/100</h2>
+          <p class="pass-label pass-{{ metrics.pass_label | replace(' ', '-') | lower }}">
+            {{ metrics.pass_label }} — {{ metrics.pass_probability }}% pass probability
+          </p>
+          <p>Patterns covered: {{ metrics.covered_count }}/{{ metrics.total_patterns }}</p>
+          {% if metrics.weaknesses %}
+          <p><strong>Focus on:</strong>
+            {% for w in metrics.weaknesses %}<span class="badge badge-red">{{ w }}</span>{% endfor %}
+          </p>
+          {% endif %}
+          {% if recommended %}
+          <hr class="divider">
+          <strong>Recommended next:</strong>
+          <ul class="question-list" style="margin-top:0.5rem">
+            {% for q in recommended %}
+            <li>
+              <a href="{{ url_for('question_view', question_id=q.id) }}">[{{ q.id }}] {{ q.title }}</a>
+              <span class="diff-badge diff-{{ q.difficulty | lower }}">{{ q.difficulty }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </div>
+
+      </div>
+    </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/anyword-hint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+  <script>
+    const PYTHON_WORDS = [
+      'def','class','if','elif','else','for','while','return','import','from',
+      'in','not','and','or','is','None','True','False','pass','break','continue',
+      'lambda','with','as','try','except','finally','raise','yield','del',
+      'global','nonlocal','assert',
+      'len','range','print','min','max','sum','abs','sorted','reversed',
+      'enumerate','zip','map','filter','any','all','isinstance','type',
+      'int','str','float','bool','list','dict','set','tuple','frozenset',
+      'round','divmod','pow','hash','repr','chr','ord','hex','bin','oct',
+      'input','open','super',
+      'List','Dict','Set','Tuple','Optional','Any','Union','Deque',
+      'collections','Counter','defaultdict','deque','OrderedDict',
+      'heapq','heappush','heappop','heapify','nlargest','nsmallest','heappushpop',
+      'math','bisect','bisect_left','bisect_right','insort','functools',
+      'lru_cache','cache','reduce','itertools','inf','ceil','floor','gcd','sqrt','log',
+      'append','pop','insert','remove','extend','sort','reverse','index','count',
+      'copy','clear','keys','values','items','get','update','setdefault',
+      'split','join','strip','replace','find','startswith','endswith',
+      'lower','upper','isalnum','isdigit','isalpha',
+    ];
+
+    function pythonHint(cm) {
+      const cur = cm.getCursor();
+      const token = cm.getTokenAt(cur);
+      const word = token.string.slice(0, cur.ch - token.start);
+      const anyword = CodeMirror.hint.anyword(cm) || { list: [] };
+      const combined = Array.from(new Set([
+        ...anyword.list,
+        ...PYTHON_WORDS.filter(w => w.startsWith(word) && w !== word)
+      ])).sort();
+      return { list: combined, from: CodeMirror.Pos(cur.line, token.start), to: CodeMirror.Pos(cur.line, cur.ch) };
+    }
+
+    const starterCode = {{ starter_code | tojson }};
+    const cmEditor = CodeMirror(document.getElementById('codemirror-editor'), {
+      value: starterCode,
+      mode: 'python',
+      theme: 'dracula',
+      lineNumbers: true,
+      indentUnit: 4,
+      tabSize: 4,
+      indentWithTabs: false,
+      matchBrackets: true,
+      autoCloseBrackets: true,
+      extraKeys: {
+        'Tab': cm => cm.somethingSelected() ? cm.indentSelection('add') : cm.replaceSelection('    ', 'end'),
+        'Shift-Tab': cm => cm.indentSelection('subtract'),
+        'Ctrl-Space': cm => CodeMirror.showHint(cm, pythonHint),
+      },
+    });
+
+    cmEditor.on('inputRead', function(cm, change) {
+      if (change.text[0] && /\w/.test(change.text[0])) {
+        const token = cm.getTokenAt(cm.getCursor());
+        if (token.string.length >= 2)
+          CodeMirror.showHint(cm, pythonHint, { completeSingle: false });
+      }
+    });
+
+    // Timer
+    const timerDisplay = document.getElementById('timer-display');
+    let elapsedSeconds = 0;
+    const timerInterval = setInterval(() => {
+      elapsedSeconds++;
+      const m = Math.floor(elapsedSeconds / 60);
+      const s = elapsedSeconds % 60;
+      timerDisplay.textContent = m + ':' + String(s).padStart(2, '0');
+      if (elapsedSeconds >= 1200) timerDisplay.classList.add('timer-warn');
+    }, 1000);
+
+    document.getElementById('solution-form').addEventListener('submit', function() {
+      clearInterval(timerInterval);
+      document.getElementById('code-hidden').value = cmEditor.getValue();
+      document.getElementById('time-seconds-hidden').value = elapsedSeconds;
+    });
+  </script>
+  </body>
+</html>

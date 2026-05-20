@@ -1,0 +1,145 @@
+{
+  "Hash Map": {
+    "what": "Use a dictionary to store values you've seen before, enabling O(1) lookup instead of O(n) scans. The core trade-off: spend O(n) space to reduce time from O(n²) to O(n).",
+    "when_to_use": "Whenever you need to check 'have I seen X before?', count frequencies, or group items by a key property.",
+    "template": "seen = {}\nfor i, val in enumerate(arr):\n    complement = target - val\n    if complement in seen:\n        return [seen[complement], i]\n    seen[val] = i",
+    "watch_out": [
+      "Using the same element twice — store index and check i != seen[val]",
+      "Returning values instead of indices",
+      "Forgetting that dict lookup is O(1) average but O(n) worst case"
+    ],
+    "key_questions": [
+      "Two Sum", "Group Anagrams", "Top K Frequent Elements", "Valid Anagram", "Longest Consecutive Sequence"
+    ]
+  },
+  "Two Pointers": {
+    "what": "Use two indices (left/right or slow/fast) to scan an array or string from different positions simultaneously. Collapses O(n²) pair-searching to O(n).",
+    "when_to_use": "Sorted arrays, palindrome checks, finding pairs/triplets summing to a target, or partitioning.",
+    "template": "left, right = 0, len(arr) - 1\nwhile left < right:\n    if condition_met(arr[left], arr[right]):\n        record result\n        left += 1; right -= 1\n    elif too_small:\n        left += 1\n    else:\n        right -= 1",
+    "watch_out": [
+      "Not sorting first when the problem requires it (3Sum, Container With Most Water)",
+      "Moving both pointers when only one should move",
+      "Off-by-one: use left < right, not left <= right, for two-end pointers"
+    ],
+    "key_questions": [
+      "3Sum", "Container With Most Water", "Trapping Rain Water", "Valid Palindrome"
+    ]
+  },
+  "Sliding Window": {
+    "what": "Maintain a window (contiguous subarray or substring) and slide it across the data. Expand one end, shrink the other, keeping track of window state. Turns O(n²) into O(n).",
+    "when_to_use": "Problems involving contiguous subarrays/substrings with a constraint (max length without duplicates, contains all of t, at most k replacements).",
+    "template": "left = 0\nwindow_state = {}\nresult = 0\nfor right in range(len(s)):\n    # expand: add s[right] to window_state\n    while window_is_invalid(window_state):\n        # shrink: remove s[left], left += 1\n    result = max(result, right - left + 1)\nreturn result",
+    "watch_out": [
+      "Forgetting to update window state when shrinking (removing s[left])",
+      "Window size is right - left + 1 (not right - left)",
+      "Fixed vs. variable window: for fixed-size windows, slide exactly one step at a time"
+    ],
+    "key_questions": [
+      "Longest Substring Without Repeating Characters", "Minimum Window Substring", "Longest Repeating Character Replacement", "Permutation in String"
+    ]
+  },
+  "Binary Search": {
+    "what": "Eliminate half the search space on each step. Requires a monotone predicate — the answer space must have a clear threshold. Works on sorted arrays AND on answer-space problems.",
+    "when_to_use": "Sorted arrays, finding minimum/maximum of a feasible answer (binary search on answer), rotated arrays, 'find first/last position of X'.",
+    "template": "left, right = 0, len(nums) - 1\nwhile left <= right:\n    mid = left + (right - left) // 2  # avoids overflow\n    if nums[mid] == target:\n        return mid\n    elif nums[mid] < target:\n        left = mid + 1\n    else:\n        right = mid - 1\nreturn -1",
+    "watch_out": [
+      "left < right vs left <= right — use <= for standard search, < when narrowing to a value",
+      "Integer overflow: use mid = left + (right - left) // 2",
+      "Off-by-one after loop: if you narrow to one element, check it manually"
+    ],
+    "key_questions": [
+      "Binary Search", "Find Minimum in Rotated Sorted Array", "Search in Rotated Sorted Array", "Koko Eating Bananas"
+    ]
+  },
+  "Stack": {
+    "what": "LIFO structure that tracks history. Monotonic stacks maintain a stack in increasing or decreasing order, letting you find the next greater/smaller element for every item in O(n).",
+    "when_to_use": "Matching brackets, next greater/smaller element, expression evaluation, maintaining a 'last seen' context that needs to be unwound.",
+    "template": "# Monotonic decreasing stack (next greater element)\nstack = []  # stores indices\nresult = [0] * len(nums)\nfor i, val in enumerate(nums):\n    while stack and nums[stack[-1]] < val:\n        idx = stack.pop()\n        result[idx] = val  # or i - idx for 'days until warmer'\n    stack.append(i)",
+    "watch_out": [
+      "Using a counter instead of a stack — fails for interleaved brackets like '{[}]'",
+      "Not checking if stack is empty before popping",
+      "Storing values instead of indices when you need position information"
+    ],
+    "key_questions": [
+      "Valid Parentheses", "Daily Temperatures", "Generate Parentheses"
+    ]
+  },
+  "Dynamic Programming 1D": {
+    "what": "Break a problem into overlapping subproblems. Store results in a table so each subproblem is solved once. 1D DP uses a single array where dp[i] depends only on earlier values.",
+    "when_to_use": "Optimization problems (max/min) or counting problems where the answer at i depends on answers at earlier indices. Overlapping subproblems + optimal substructure.",
+    "template": "# Bottom-up\ndp = [0] * (n + 1)\ndp[0] = base_case\nfor i in range(1, n + 1):\n    dp[i] = recurrence(dp[i-1], dp[i-2], ...)  # depends on problem\nreturn dp[n]\n\n# Space-optimized (when only last 1-2 values needed)\na, b = base_case_0, base_case_1\nfor i in range(2, n + 1):\n    a, b = b, recurrence(a, b)\nreturn b",
+    "watch_out": [
+      "Greedy fails for DP problems — test with a counter-example (coin change with [1,3,4])",
+      "Initializing dp to 0 when it should be float('inf') for minimization problems",
+      "Off-by-one: dp array is usually size n+1 with dp[0] as base case"
+    ],
+    "key_questions": [
+      "Climbing Stairs", "House Robber", "Coin Change", "Longest Increasing Subsequence", "Word Break"
+    ]
+  },
+  "Dynamic Programming 2D": {
+    "what": "2D DP uses a table where dp[i][j] captures the answer for subproblem (i, j). Common for string comparison, grid pathfinding, and game theory problems.",
+    "when_to_use": "Two sequences being compared (LCS, Edit Distance), 2D grid problems (Unique Paths), problems with two changing parameters.",
+    "template": "# LCS-style\ndp = [[0] * (n + 1) for _ in range(m + 1)]\nfor i in range(1, m + 1):\n    for j in range(1, n + 1):\n        if match(i, j):\n            dp[i][j] = dp[i-1][j-1] + 1\n        else:\n            dp[i][j] = max(dp[i-1][j], dp[i][j-1])\nreturn dp[m][n]",
+    "watch_out": [
+      "Forgetting the zero-padding row and column (dp is (m+1)x(n+1))",
+      "Confusing LCS (subsequence, can skip) with Longest Common Substring (contiguous)",
+      "Not space-optimizing when only the previous row is needed"
+    ],
+    "key_questions": [
+      "Unique Paths", "Longest Common Subsequence"
+    ]
+  },
+  "Backtracking": {
+    "what": "Build a solution incrementally, abandoning ('backtracking') paths that can't lead to a valid answer. A form of DFS on the decision tree — choose, explore, unchoose.",
+    "when_to_use": "Generating all combinations, permutations, or subsets. Constraint satisfaction (N-Queens, Sudoku). Word search on grids.",
+    "template": "def backtrack(start, path):\n    if is_solution(path):\n        result.append(list(path))  # copy!\n        return\n    for choice in choices_from(start):\n        path.append(choice)      # choose\n        backtrack(next_start, path)  # explore\n        path.pop()               # unchoose\n\nresult = []\nbacktrack(0, [])\nreturn result",
+    "watch_out": [
+      "Appending path instead of list(path) — path is mutable, you'll get all empty lists",
+      "Forgetting to undo the choice (the 'unchoose' step)",
+      "Starting from index 0 in each recursion for combination problems — causes duplicate orderings"
+    ],
+    "key_questions": [
+      "Combination Sum", "Permutations", "Subsets", "Word Search", "Generate Parentheses"
+    ]
+  },
+  "Graph DFS/BFS": {
+    "what": "DFS explores as deep as possible before backtracking (uses a stack or recursion). BFS explores level by level (uses a queue). Both run O(V+E). BFS guarantees shortest path in unweighted graphs.",
+    "when_to_use": "Connected components (islands), cycle detection, shortest path (BFS), topological sort (DFS), flood fill.",
+    "template": "# DFS (iterative)\nvisited = set()\nstack = [start]\nwhile stack:\n    node = stack.pop()\n    if node in visited: continue\n    visited.add(node)\n    for neighbor in graph[node]:\n        if neighbor not in visited:\n            stack.append(neighbor)\n\n# BFS\nfrom collections import deque\nqueue = deque([start])\nvisited = {start}\nwhile queue:\n    node = queue.popleft()\n    for neighbor in graph[node]:\n        if neighbor not in visited:\n            visited.add(neighbor)\n            queue.append(neighbor)",
+    "watch_out": [
+      "Marking visited BEFORE adding to queue (not after popping) — prevents duplicates in BFS",
+      "Forgetting to handle disconnected graphs: loop over all nodes, not just one",
+      "Using visited set for DFS cycle detection instead of 3-state coloring (need in-path vs fully-done)"
+    ],
+    "key_questions": [
+      "Number of Islands", "Course Schedule", "Pacific Atlantic Water Flow"
+    ]
+  },
+  "Intervals": {
+    "what": "Problems involving ranges [start, end]. The key insight is almost always: sort by start (or end) time, then make a greedy decision as you sweep through.",
+    "when_to_use": "Scheduling, overlapping ranges, inserting/merging ranges.",
+    "template": "# Merge intervals\nintervals.sort(key=lambda x: x[0])\nresult = [intervals[0]]\nfor start, end in intervals[1:]:\n    if start <= result[-1][1]:  # overlap\n        result[-1][1] = max(result[-1][1], end)\n    else:\n        result.append([start, end])\nreturn result",
+    "watch_out": [
+      "Using < instead of <= for overlap check — intervals touching at a point ([1,3],[3,5]) do overlap",
+      "Forgetting to sort — the greedy sweep only works on sorted intervals",
+      "For Non-overlapping: sort by END time (not start) — the greedy keeps earliest-ending interval"
+    ],
+    "key_questions": [
+      "Merge Intervals", "Insert Interval", "Non-overlapping Intervals"
+    ]
+  },
+  "Heap": {
+    "what": "A heap (priority queue) gives O(log n) insert and O(log n) extract-min/max. Python's heapq is a min-heap. To simulate a max-heap, negate values.",
+    "when_to_use": "Kth largest/smallest, scheduling problems, stream median, merge k sorted lists, greedy problems needing repeated access to min/max.",
+    "template": "import heapq\n\n# Min-heap (default)\nheap = []\nheapq.heappush(heap, val)\nmin_val = heapq.heappop(heap)\n\n# Max-heap (negate)\nheapq.heappush(heap, -val)\nmax_val = -heapq.heappop(heap)\n\n# Kth largest (min-heap of size k)\nfor n in nums:\n    heapq.heappush(heap, n)\n    if len(heap) > k:\n        heapq.heappop(heap)\nreturn heap[0]  # kth largest",
+    "watch_out": [
+      "Python's heapq is a min-heap — max requires negation",
+      "heapq.heappush/pop are O(log n), heapify is O(n) — use heapify for bulk initialization",
+      "heappushpop is more efficient than separate push + pop"
+    ],
+    "key_questions": [
+      "Top K Frequent Elements", "Kth Largest Element in an Array"
+    ]
+  }
+}
