@@ -5,8 +5,19 @@ import bisect
 import math
 import functools
 import itertools
+import signal
 import time
 from typing import Any, Dict, List, Tuple
+
+_TEST_TIMEOUT_SECONDS = 2
+
+
+class TimeLimitExceeded(Exception):
+    pass
+
+
+def _timeout_handler(signum, frame):
+    raise TimeLimitExceeded()
 
 
 # ---------------------------------------------------------------------------
@@ -220,19 +231,29 @@ def execute_submission(code: str, function_name: str, test_cases: List[Dict[str,
                 inputs[param] = converter(inputs[param])
 
         try:
-            result = func(**inputs)
+            signal.signal(signal.SIGALRM, _timeout_handler)
+            signal.alarm(_TEST_TIMEOUT_SECONDS)
+            try:
+                result = func(**inputs)
 
-            # Apply output converter if specified
-            output_converter_name = case.get("output_converter")
-            if output_converter_name:
-                output_converter = namespace.get(output_converter_name)
-                if output_converter is not None:
-                    result = output_converter(result)
+                # Apply output converter if specified
+                output_converter_name = case.get("output_converter")
+                if output_converter_name:
+                    output_converter = namespace.get(output_converter_name)
+                    if output_converter is not None:
+                        result = output_converter(result)
+            finally:
+                signal.alarm(0)  # always cancel the alarm
 
             if _compare(result, expected, comparison):
                 passed += 1
             else:
                 failed_cases.append({"case": idx, "input": case["input"], "expected": expected, "output": result})
+        except TimeLimitExceeded:
+            failed_cases.append({
+                "case": idx, "input": case["input"], "expected": expected,
+                "error": f"Time Limit Exceeded (>{_TEST_TIMEOUT_SECONDS}s) — infinite loop? Check your loop termination condition (e.g. missing cur = cur.next)."
+            })
         except Exception as exc:
             failed_cases.append({"case": idx, "input": case["input"], "expected": expected, "error": str(exc)})
 
